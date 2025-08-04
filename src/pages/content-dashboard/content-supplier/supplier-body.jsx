@@ -26,9 +26,22 @@ const SupplierBody = () => {
   const [sortOrderCreate, setSortOrderCreate] = useState(null);
   const [sortOrderUpdated, setSortOrderUpdated] = useState(null);
   const searchInput = useRef(null);
+  const [paginationInfo, setPaginationInfo] = useState({
+    current: 1,
+    pageSize: 10,
+  });
 
-  const handleTableChange = (_, __, sorter) => {
-    sorter.columnKey === 'CreateDate' ? setSortOrderCreate(sorter.order) : setSortOrderUpdated(sorter.order);
+  const handleTableChange = (pagination, filters, sorter) => {
+    setPaginationInfo({
+      current: pagination.current,
+      pageSize: pagination.pageSize,
+    });
+
+    if (sorter.columnKey === "createdDate") {
+      setSortOrderCreate(sorter.order);
+    } else {
+      setSortOrderUpdated(sorter.order);
+    }
   };
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -128,71 +141,88 @@ const SupplierBody = () => {
 
   const columns = [
     {
-      title: '#',
-      dataIndex: 'index',
-      key: 'index',
-      width: '4%',
-      render: (text) => text,
+      title: "#",
+      dataIndex: "index",
+      key: "index",
+      width: "4%",
+      render: (_text, _record, rowIndex) => (
+        <div>
+          {(paginationInfo.current - 1) * paginationInfo.pageSize +
+            rowIndex +
+            1}
+        </div>
+      ),
     },
     {
-      title: '',
-      dataIndex: 'ColorCode',
-      key: 'ColorCode',
-      width: '4%',
-      render: (_, { ColorCode}) => {
+      title: "",
+      dataIndex: "ColorCode",
+      key: "ColorCode",
+      width: "4%",
+      render: (_, { ColorCode }) => {
         return (
-          <div className='w-full h-full flex justify-center items-center'>
-            <div className='w-[10px] h-[10px] rounded-full' style={{backgroundColor: ColorCode}}></div>
+          <div className="w-full h-full flex justify-center items-center">
+            <div
+              className="w-[10px] h-[10px] rounded-full"
+              style={{ backgroundColor: ColorCode }}
+            ></div>
           </div>
-        )
+        );
       },
     },
     {
-      title: 'Supplier Name',
-      dataIndex: 'SupplierName',
-      key: 'SupplierName',
-      ...getColumnSearchProps('SupplierNameEN'),
-      width: '25%',
-      render: (_, { SupplierNameEN, image }) =>  <div className="flex gap-x-3 items-center">
-        {
-          !image ?
+      title: "Supplier Name",
+      dataIndex: "SupplierName",
+      key: "SupplierName",
+      ...getColumnSearchProps("SupplierNameEN"),
+      width: "25%",
+      render: (_, { SupplierNameEN, image }) => (
+        <div className="flex gap-x-3 items-center">
+          {!image ? (
             <div>
-              <div className='flex justify-center'>
-                <img className='w-[30px]' src={NotFound} />
+              <div className="flex justify-center">
+                <img className="w-[30px]" src={NotFound} />
               </div>
-              <div className='flex justify-center text-[12px]'>Not Available</div>
+              <div className="flex justify-center text-[12px]">
+                Not Available
+              </div>
             </div>
-            :
+          ) : (
             <div>
-              <img className='flex w-[45px] h-[45px] justify-center p-1 border rounded-[10px] object-contain' src={`${import.meta.env.VITE_REDIRECT_IMG}/images/${image}`} alt="" />
+              <img
+                className="flex w-[45px] h-[45px] justify-center p-1 border rounded-[10px] object-contain"
+                src={`${import.meta.env.VITE_REDIRECT_IMG}/images/${image}`}
+                alt=""
+              />
             </div>
-          }
+          )}
           <div>
             <span className="font-primaryMedium">{SupplierNameEN}</span>
           </div>
-        </div>,
+        </div>
+      ),
     },
     {
-      title: 'Company & Business unit',
-      dataIndex: 'Company',
-      key: 'Company',
+      title: "Company & Business unit",
+      dataIndex: "Company",
+      key: "Company",
       ellipsis: true,
-      ...getColumnSearchProps('Company'),
-      render: (_, { Company }) => 
-          <span className="font-primaryMedium">{Company}</span>
+      ...getColumnSearchProps("Company"),
+      render: (_, { Company }) => (
+        <span className="font-primaryMedium">{Company}</span>
+      ),
     },
     {
-      title: 'Status',
-      key: 'tags',
-      dataIndex: 'tags',
+      title: "Status",
+      key: "tags",
+      dataIndex: "tags",
       filters: [
         {
-          text: 'Active',
-          value: 'Active',
+          text: "Active",
+          value: "Active",
         },
         {
-          text: 'Inactive',
-          value: 'Inactive',
+          text: "Inactive",
+          value: "Inactive",
         },
       ],
       onFilter: (value, record) => {
@@ -230,62 +260,70 @@ const SupplierBody = () => {
     },
     {
       title: (
-          <div className="flex justify-center items-center">
-            Created Date
-            {sortOrderCreate === "ascend" && <AiOutlineArrowDown className="ml-2" />}
-            {sortOrderCreate === "descend" && <AiOutlineArrowUp className="ml-2" />}
+        <div className="flex justify-center items-center">
+          Created Date
+          {sortOrderCreate === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrderCreate === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
+      dataIndex: "CreateDate",
+      key: "CreateDate",
+      align: "center",
+      sorter: (a, b) => new Date(a.CreateDate) - new Date(b.CreateDate),
+      sortDirections: ["ascend", "descend"],
+      render: (_, { CreateDate }) => {
+        if (!CreateDate) return <span className="text-gray-500">No Date</span>;
+        const [datefformat] = new Date(CreateDate).toISOString().split("T");
+        return (
+          <div className="text-center">
+            {dateFormat(datefformat, "mediumDate")}
           </div>
-        ),
-        dataIndex: "CreateDate",
-        key: "CreateDate",
-        align: "center",
-        sorter: (a, b) => new Date(a.CreateDate) - new Date(b.CreateDate),
-        sortDirections: ["ascend", "descend"],
-        render: (_,{CreateDate}) => {
-            if (!CreateDate) return <span className="text-gray-500">No Date</span>;
-            const [datefformat] = new Date(CreateDate).toISOString().split("T");
-            return (
-                <div className="text-center">
-                    {dateFormat(datefformat, "mediumDate")}
-                </div>
-            );
-        },
+        );
+      },
     },
     {
       title: (
-          <div className="flex justify-center items-center">
-            Last Updated
-            {sortOrderUpdated === "ascend" && <AiOutlineArrowDown className="ml-2" />}
-            {sortOrderUpdated === "descend" && <AiOutlineArrowUp className="ml-2" />}
+        <div className="flex justify-center items-center">
+          Last Updated
+          {sortOrderUpdated === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrderUpdated === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
+      dataIndex: "Updated",
+      key: "Updated",
+      align: "center",
+      sorter: (a, b) => new Date(a.UpdateDate) - new Date(b.UpdateDate),
+      sortDirections: ["ascend", "descend"],
+      render: (_, { UpdateDate }) => {
+        if (!UpdateDate) return <span className="text-gray-500">No Date</span>;
+        const [datefformat] = new Date(UpdateDate).toISOString().split("T");
+        return (
+          <div className="text-center">
+            {dateFormat(datefformat, "mediumDate")}
           </div>
-        ),
-        dataIndex: "Updated",
-        key: "Updated",
-        align: "center",
-        sorter: (a, b) => new Date(a.UpdateDate) - new Date(b.UpdateDate),
-        sortDirections: ["ascend", "descend"],
-        render: (_,{UpdateDate}) => {
-            if (!UpdateDate) return <span className="text-gray-500">No Date</span>;
-            const [datefformat] = new Date(UpdateDate).toISOString().split("T");
-            return (
-                <div className="text-center">
-                    {dateFormat(datefformat, "mediumDate")}
-                </div>
-            );
-        },
+        );
+      },
     },
     {
-      title: 'Created By.',
-      dataIndex: 'CreateBy',
-      key: 'CreateBy',
-      ...getColumnSearchProps('CreateBy'),
+      title: "Created By.",
+      dataIndex: "CreateBy",
+      key: "CreateBy",
+      ...getColumnSearchProps("CreateBy"),
       render: (text) => <a>{text}</a>,
-  },
+    },
     {
-      title: 'Action',
-      key: 'action',
+      title: "Action",
+      key: "action",
       render: (_, record) => (
-        <div className='w-full flex gap-x-3'>
+        <div className="w-full flex gap-x-3">
           <SupplierCanvas supId={record.key} />
           {/* <SupplierModal supId={record.key}  conditions='delete' /> */}
         </div>

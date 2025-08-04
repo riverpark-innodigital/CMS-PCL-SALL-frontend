@@ -24,6 +24,10 @@ const GroupPermissionContent = () => {
   const [searchAll, setSearchAll] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef(null);
+  const [paginationInfo, setPaginationInfo] = useState({
+    current: 1,
+    pageSize: 10,
+  });
 
   useEffect(() => {
     if (isFacing.current) return;
@@ -170,7 +174,13 @@ const GroupPermissionContent = () => {
       title: "#",
       dataIndex: "#",
       key: "key",
-      render: (_, { key }) => <div>{key}</div>,
+      render: (_text, _record, rowIndex) => (
+        <div>
+          {(paginationInfo.current - 1) * paginationInfo.pageSize +
+            rowIndex +
+            1}
+        </div>
+      ),
     },
     {
       title: "Sale team name",
@@ -323,10 +333,17 @@ const GroupPermissionContent = () => {
     },
   ];
 
-  const handleTableChange = (_, __, sorter) => {
-    sorter.columnKey === "createdDate"
-      ? setSortOrderCreate(sorter.order)
-      : setSortOrderUpdated(sorter.order);
+  const handleTableChange = (pagination, filters, sorter) => {
+    setPaginationInfo({
+      current: pagination.current,
+      pageSize: pagination.pageSize,
+    });
+
+    if (sorter.columnKey === "createdDate") {
+      setSortOrderCreate(sorter.order);
+    } else {
+      setSortOrderUpdated(sorter.order);
+    }
   };
 
   const filteredData = tableData.filter((item) =>

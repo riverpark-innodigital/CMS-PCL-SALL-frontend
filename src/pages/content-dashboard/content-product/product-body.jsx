@@ -5,11 +5,11 @@ import { fetchAllProducts } from "../../../slicers/productsaleSlicer";
 
 // import ProductModal from "./product-modal.jsx";
 import ProductCanvas from "./product-canvas.jsx";
-import { SearchOutlined } from '@ant-design/icons';
-import Highlighter from 'react-highlight-words';
-import { Table, Button,Input, Space } from 'antd';
+import { SearchOutlined } from "@ant-design/icons";
+import Highlighter from "react-highlight-words";
+import { Table, Button, Input, Space } from "antd";
 
-import { AiOutlineArrowDown, AiOutlineArrowUp  } from "react-icons/ai";
+import { AiOutlineArrowDown, AiOutlineArrowUp } from "react-icons/ai";
 import DotLoader from "../../../components/content-loading/dot-loader.jsx";
 import NormalCard from "../../../components/content-card/normal-card";
 import GetNewObject from "../../../hooks/new-object";
@@ -17,51 +17,56 @@ import dateFormat from "dateformat";
 import SearchInputComponent from "../../../components/content-input/search-input.jsx";
 
 const ProductTable = () => {
-
   const dispatch = useDispatch();
-  const { allProducts } = useSelector((state) => state.productsale);  
+  const { allProducts } = useSelector((state) => state.productsale);
   const [sortOrderCreate, setSortOrderCreate] = useState(null);
   const [sortOrderUpdated, setSortOrderUpdated] = useState(null);
   const [tableData, setTableData] = useState([]);
-  const [searchText, setSearchText] = useState('');
-  const [searchAll, setSearchAll] = useState('');
-  const [searchedColumn, setSearchedColumn] = useState('');
-  const [isLoading, setIsLoading] = useState(false)
+  const [searchText, setSearchText] = useState("");
+  const [searchAll, setSearchAll] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const searchInput = useRef(null);
-  
+
+  const [paginationInfo, setPaginationInfo] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+
+
   useEffect(() => {
     dispatch(fetchAllProducts());
   }, [dispatch]);
-  
-  useEffect(() => {
-      setIsLoading(true);
-      if (allProducts.length > 0) { 
-          setTableData(
-            allProducts.map((product, index) => ({
-              key: index + 1,
-              productId: product.ProductId,
-              productNo: product.ProductNo,
-              product: product.ProductNameEn,
-              productGroup: product.ProductGroupName,
-              model: product.ProductModelName,
-              supplier: product.SupplierName,
-              supplierImage: product.SupplierImage,
-              imageMain: product.ProductImageMain,
-              frmDate: product.frmDate,
-              createdDate: product.CreateDate,
-              updatedDate: product.Updatedate,
-              createdBy: product.CreateBy,
-              Campany: product.Campany,
-              status: product.Active ? "Active" : "Inactive",
-              proId: product.ProductId,
-            }))
-          );
-          setIsLoading(false);
-      }
 
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 5000);
+  useEffect(() => {
+    setIsLoading(true);
+    if (allProducts.length > 0) {
+      setTableData(
+        allProducts.map((product, index) => ({
+          key: index + 1,
+          productId: product.ProductId,
+          productNo: product.ProductNo,
+          product: product.ProductNameEn,
+          productGroup: product.ProductGroupName,
+          model: product.ProductModelName,
+          supplier: product.SupplierName,
+          supplierImage: product.SupplierImage,
+          imageMain: product.ProductImageMain,
+          frmDate: product.frmDate,
+          createdDate: product.CreateDate,
+          updatedDate: product.Updatedate,
+          createdBy: product.CreateBy,
+          Campany: product.Campany,
+          status: product.Active ? "Active" : "Inactive",
+          proId: product.ProductId,
+        }))
+      );
+      setIsLoading(false);
+    }
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
   }, [dispatch, allProducts]);
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -71,16 +76,24 @@ const ProductTable = () => {
   };
   const handleReset = (clearFilters) => {
     clearFilters();
-    setSearchText('');
+    setSearchText("");
   };
   const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0] || ""}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{ marginBottom: 8, display: "block" }}
         />
@@ -112,7 +125,9 @@ const ProductTable = () => {
     ),
     onFilter: (value, record) => {
       if (!value || typeof value !== "string") return false; // ✅ Prevent errors
-      const dataValue = record[dataIndex] ? record[dataIndex].toString().toLowerCase() : "";
+      const dataValue = record[dataIndex]
+        ? record[dataIndex].toString().toLowerCase()
+        : "";
       return dataValue.includes(value.toLowerCase());
     },
     filterDropdownProps: {
@@ -133,9 +148,7 @@ const ProductTable = () => {
       ) : (
         text
       ),
-  });  
-  
-
+  });
 
   const columns = [
     {
@@ -143,24 +156,30 @@ const ProductTable = () => {
       dataIndex: "#",
       key: "key",
       width: "5%",
-      render: (_, { key }) => <div>{key}</div>,
+      render: (_text, _record, rowIndex) => (
+        <div>
+          {(paginationInfo.current - 1) * paginationInfo.pageSize +
+            rowIndex +
+            1}
+        </div>
+      ),
     },
     {
       title: "Product",
       dataIndex: "product",
       key: "product",
       width: "20%",
-      ...getColumnSearchProps('product'),
+      ...getColumnSearchProps("product"),
       render: (_, { imageMain, product, createdDate }) => (
         <div className="flex items-center gap-x-3">
           <div>
-            <img 
+            <img
               src={`${import.meta.env.VITE_REDIRECT_IMG}/images/${imageMain}`}
-              alt="Product" 
-              className='flex w-[45px] h-[45px] justify-center p-1 border rounded-[10px] object-contain'
+              alt="Product"
+              className="flex w-[45px] h-[45px] justify-center p-1 border rounded-[10px] object-contain"
             />
           </div>
-          <GetNewObject date={createdDate}/>
+          <GetNewObject date={createdDate} />
           {product}
         </div>
       ),
@@ -170,7 +189,7 @@ const ProductTable = () => {
       dataIndex: "productGroup",
       key: "productGroup",
       width: "10%",
-      ...getColumnSearchProps('productGroup'),
+      ...getColumnSearchProps("productGroup"),
       render: (_, { productGroup, model }) => (
         <div>
           {productGroup}
@@ -183,10 +202,16 @@ const ProductTable = () => {
       dataIndex: "supplier",
       key: "supplier",
       width: "10%",
-      ...getColumnSearchProps('supplier'),
+      ...getColumnSearchProps("supplier"),
       render: (_, { supplierImage, supplier }) => (
         <div className="flex items-center">
-          <img src={`${import.meta.env.VITE_REDIRECT_IMG}/images/${supplierImage}`} alt="Supplier" width={40} height={40} className=" mr-2" />
+          <img
+            src={`${import.meta.env.VITE_REDIRECT_IMG}/images/${supplierImage}`}
+            alt="Supplier"
+            width={40}
+            height={40}
+            className=" mr-2"
+          />
           {supplier}
         </div>
       ),
@@ -195,20 +220,20 @@ const ProductTable = () => {
       title: "Campany & BU",
       dataIndex: "campany",
       key: "campany",
-      ...getColumnSearchProps('Campany'),
+      ...getColumnSearchProps("Campany"),
       width: "15%",
-      render: (_, { Campany }) => (
-        <div>
-          {Campany}
-        </div>
-      ),
+      render: (_, { Campany }) => <div>{Campany}</div>,
     },
     {
       title: (
         <div className="flex justify-center items-center">
           Created Date
-          {sortOrderCreate === "ascend" && <AiOutlineArrowDown className="ml-2" />}
-          {sortOrderCreate === "descend" && <AiOutlineArrowUp className="ml-2" />}
+          {sortOrderCreate === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrderCreate === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
         </div>
       ),
       dataIndex: "createdDate",
@@ -217,21 +242,25 @@ const ProductTable = () => {
       sorter: (a, b) => new Date(a.createdDate) - new Date(b.createdDate),
       sortDirections: ["ascend", "descend"],
       render: (date) => {
-          if (!date) return <span className="text-gray-500">No Date</span>;
-          const [createdDate] = new Date(date).toISOString().split("T");
-          return (
-              <div className="text-center">
-                  {dateFormat(createdDate, "mediumDate")}
-              </div>
-          );
+        if (!date) return <span className="text-gray-500">No Date</span>;
+        const [createdDate] = new Date(date).toISOString().split("T");
+        return (
+          <div className="text-center">
+            {dateFormat(createdDate, "mediumDate")}
+          </div>
+        );
       },
     },
     {
       title: (
         <div className="flex justify-center items-center">
           Last Updated
-          {sortOrderUpdated === "ascend" && <AiOutlineArrowDown className="ml-2" />}
-          {sortOrderUpdated === "descend" && <AiOutlineArrowUp className="ml-2" />}
+          {sortOrderUpdated === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrderUpdated === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
         </div>
       ),
       dataIndex: "updatedDate",
@@ -239,14 +268,14 @@ const ProductTable = () => {
       align: "center",
       sorter: (a, b) => new Date(a.updatedDate) - new Date(b.updatedDate),
       sortDirections: ["ascend", "descend"],
-      render: (_,{updatedDate}) => {
-          if (!updatedDate) return <span className="text-gray-500">No Date</span>;
-          const [datefformat] = new Date(updatedDate).toISOString().split("T");
-          return (
-              <div className="text-center">
-                  {dateFormat(datefformat, "mediumDate")}
-              </div>
-          );
+      render: (_, { updatedDate }) => {
+        if (!updatedDate) return <span className="text-gray-500">No Date</span>;
+        const [datefformat] = new Date(updatedDate).toISOString().split("T");
+        return (
+          <div className="text-center">
+            {dateFormat(datefformat, "mediumDate")}
+          </div>
+        );
       },
     },
     {
@@ -255,12 +284,12 @@ const ProductTable = () => {
       align: "center",
       filters: [
         {
-          text: 'Active',
-          value: 'Active',
+          text: "Active",
+          value: "Active",
         },
         {
-          text: 'Inactive',
-          value: 'Inactive',
+          text: "Inactive",
+          value: "Inactive",
         },
       ],
       onFilter: (value, record) => record.status.includes(value), // ✅ Fix: Filter by status
@@ -298,24 +327,33 @@ const ProductTable = () => {
       title: "Created by",
       dataIndex: "createdBy",
       key: "createdBy",
-      ...getColumnSearchProps('createdBy'),
+      ...getColumnSearchProps("createdBy"),
       align: "center",
     },
     {
       title: "Actions",
       key: "actions",
       align: "center",
-      render: (_, {proId}) => (
+      render: (_, { proId }) => (
         <div className="flex justify-center gap-2">
-          <ProductCanvas proId={parseInt(proId)}/>
+          <ProductCanvas proId={parseInt(proId)} />
           {/* <ProductModal conditions={'delete'} proId={parseInt(proId)} /> */}
         </div>
       ),
     },
   ];
 
-  const handleTableChange = (_, __, sorter) => {
-    sorter.columnKey === 'createdDate' ? setSortOrderCreate(sorter.order) : setSortOrderUpdated(sorter.order);
+  const handleTableChange = (pagination, filters, sorter) => {
+    setPaginationInfo({
+      current: pagination.current,
+      pageSize: pagination.pageSize,
+    });
+
+    if (sorter.columnKey === "createdDate") {
+      setSortOrderCreate(sorter.order);
+    } else {
+      setSortOrderUpdated(sorter.order);
+    }
   };
 
   const filteredData = tableData.filter((item) =>
@@ -324,35 +362,45 @@ const ProductTable = () => {
     )
   );
 
-  console.log("searchAll", searchAll);
-  console.log("filteredData", filteredData);
+  // console.log("searchAll", searchAll);
+  // console.log("filteredData", filteredData);
 
   return (
     <div>
-        <div className="w-full flex justify-center">
-          <div className="mb-[100px] w-[530px]">
-            <SearchInputComponent value={searchAll} onChange={setSearchAll} placeholder="Search" />
-          </div>
+      <div className="w-full flex justify-center">
+        <div className="mb-[100px] w-[530px]">
+          <SearchInputComponent
+            value={searchAll}
+            onChange={setSearchAll}
+            placeholder="Search"
+          />
         </div>
-       <NormalCard>
+      </div>
+      <NormalCard>
         <div>
-            <div className="px-4 py-5 flex items-center justify-between">
-              <div className="text-xl font-primaryMedium bg-white">All Products</div>
+          <div className="px-4 py-5 flex items-center justify-between">
+            <div className="text-xl font-primaryMedium bg-white">
+              All Products
             </div>
-            { isLoading ? 
-              <div className='flex bg-white justify-center items-center h-[250px]'>
-                <DotLoader />
-              </div>
-              :
-              <Table
-                columns={columns}
-                dataSource={tableData && filteredData}
-                pagination={{ pageSize: 10 }}
-                onChange={handleTableChange}
-              />
-            }
           </div>
-        </NormalCard>
+          {isLoading ? (
+            <div className="flex bg-white justify-center items-center h-[250px]">
+              <DotLoader />
+            </div>
+          ) : (
+            <Table
+              columns={columns}
+              dataSource={tableData && filteredData}
+              // pagination={{ pageSize: 10 }}
+              pagination={{
+                current: paginationInfo.current,
+                pageSize: paginationInfo.pageSize,
+              }}
+              onChange={handleTableChange}
+            />
+          )}
+        </div>
+      </NormalCard>
     </div>
   );
 };

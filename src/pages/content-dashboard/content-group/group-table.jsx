@@ -25,6 +25,11 @@ const GroupTable = () => {
   const isFatching = useRef(false);
   const searchInput = useRef(null);
 
+  const [paginationInfo, setPaginationInfo] = useState({
+    current: 1,
+    pageSize: 10,
+  });
+
   const [load, setLoad] = useState(false);
 
   useEffect(() => {
@@ -79,11 +84,18 @@ const GroupTable = () => {
     }, 5000);
   }, [dispatch, groups]);
 
-  const handleTableChange = (_, __, sorter) => {
-    sorter.columnKey === "CreateDate"
-      ? setSortOrderCreate(sorter.order)
-      : setSortOrderUpdated(sorter.order);
-  };
+ const handleTableChange = (pagination, filters, sorter) => {
+   setPaginationInfo({
+     current: pagination.current,
+     pageSize: pagination.pageSize,
+   });
+
+   if (sorter.columnKey === "createdDate") {
+     setSortOrderCreate(sorter.order);
+   } else {
+     setSortOrderUpdated(sorter.order);
+   }
+ };
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -183,7 +195,13 @@ const GroupTable = () => {
       dataIndex: "No",
       key: "No",
       width: "1%",
-      render: (_, { key }) => <div>{key}</div>,
+      render: (_text, _record, rowIndex) => (
+        <div>
+          {(paginationInfo.current - 1) * paginationInfo.pageSize +
+            rowIndex +
+            1}
+        </div>
+      ),
     },
     {
       title: "Product Group Name",

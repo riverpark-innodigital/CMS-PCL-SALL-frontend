@@ -25,11 +25,22 @@ const CompanyBody = () => {
   const searchInput = useRef(null);
   const isFatcing = useRef(false);
   const [data, setData] = useState([]);
+  const [paginationInfo, setPaginationInfo] = useState({
+    current: 1,
+    pageSize: 10,
+  });
 
-  const handleTableChange = (_, __, sorter) => {
-    sorter.columnKey === "CreateDate"
-      ? setSortOrderCreate(sorter.order)
-      : setSortOrderUpdated(sorter.order);
+  const handleTableChange = (pagination, filters, sorter) => {
+    setPaginationInfo({
+      current: pagination.current,
+      pageSize: pagination.pageSize,
+    });
+
+    if (sorter.columnKey === "createdDate") {
+      setSortOrderCreate(sorter.order);
+    } else {
+      setSortOrderUpdated(sorter.order);
+    }
   };
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -153,7 +164,13 @@ const CompanyBody = () => {
       key: "key",
       width: "1%",
       ...getColumnSearchProps("key"),
-      render: (_, { index }) => index,
+      render: (_text, _record, rowIndex) => (
+        <div>
+          {(paginationInfo.current - 1) * paginationInfo.pageSize +
+            rowIndex +
+            1}
+        </div>
+      ),
     },
     {
       title: "Company Name",

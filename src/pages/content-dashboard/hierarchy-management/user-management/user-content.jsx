@@ -24,6 +24,10 @@ const UserContent = () => {
   const searchInput = useRef(null);
   const isFacing = useRef(false);
   const navigate = useNavigate();
+  const [paginationInfo, setPaginationInfo] = useState({
+    current: 1,
+    pageSize: 10,
+  });
 
   useEffect(() => {
     if (isFacing.current) return;
@@ -45,10 +49,9 @@ const UserContent = () => {
           role: user?.appUser?.userRole?.nameEng ?? "No Data",
           updatedAt: user?.appUser?.updatedAt,
           updatedBy: user?.updatedBy,
-          updatedAtText: user?.appUser?.updatedAt?dateFormat(
-            user?.appUser?.updatedAt,
-            "mediumDate"
-          ):"-",
+          updatedAtText: user?.appUser?.updatedAt
+            ? dateFormat(user?.appUser?.updatedAt, "mediumDate")
+            : "-",
           saleteam: user?.appUser?.SaleTeam[0]?.SaleTeam?.SaleTeamName ?? "-",
         }))
       );
@@ -166,7 +169,13 @@ const UserContent = () => {
       title: "#",
       dataIndex: "#",
       key: "key",
-      render: (_, { key }) => <div>{key}</div>,
+      render: (_text, _record, rowIndex) => (
+        <div>
+          {(paginationInfo.current - 1) * paginationInfo.pageSize +
+            rowIndex +
+            1}
+        </div>
+      ),
     },
     {
       title: "Name",
@@ -283,7 +292,16 @@ const UserContent = () => {
     },
   ];
 
-  const handleTableChange = (_, __, sorter) => {
+  // const handleTableChange = (_, __, sorter) => {
+  //   sorter.columnKey === "createdDate"
+  //     ? setSortOrderUpdated(sorter.order)
+  //     : setSortOrderUpdated(sorter.order);
+  // };
+  const handleTableChange = (pagination, filters, sorter) => {
+    setPaginationInfo({
+      current: pagination.current,
+      pageSize: pagination.pageSize,
+    });
     sorter.columnKey === "createdDate"
       ? setSortOrderUpdated(sorter.order)
       : setSortOrderUpdated(sorter.order);
