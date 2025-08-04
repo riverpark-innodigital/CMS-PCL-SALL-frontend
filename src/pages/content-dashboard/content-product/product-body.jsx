@@ -36,8 +36,9 @@ const ProductTable = () => {
   useEffect(() => {
       setIsLoading(true);
       if (allProducts.length > 0) { 
-          setTableData(allProducts.map((product, index) => ({
-              key: index + 1, 
+          setTableData(
+            allProducts.map((product, index) => ({
+              key: index + 1,
               productId: product.ProductId,
               productNo: product.ProductNo,
               product: product.ProductNameEn,
@@ -46,13 +47,15 @@ const ProductTable = () => {
               supplier: product.SupplierName,
               supplierImage: product.SupplierImage,
               imageMain: product.ProductImageMain,
+              frmDate: product.frmDate,
               createdDate: product.CreateDate,
               updatedDate: product.Updatedate,
               createdBy: product.CreateBy,
               Campany: product.Campany,
               status: product.Active ? "Active" : "Inactive",
               proId: product.ProductId,
-          })));
+            }))
+          );
           setIsLoading(false);
       }
 
@@ -320,6 +323,9 @@ const ProductTable = () => {
       String(value).toLowerCase().includes(searchAll.toLowerCase())
     )
   );
+
+  console.log("searchAll", searchAll);
+  console.log("filteredData", filteredData);
 
   return (
     <div>

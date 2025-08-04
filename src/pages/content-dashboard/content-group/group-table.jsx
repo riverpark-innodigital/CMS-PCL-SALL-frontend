@@ -1,60 +1,77 @@
-import { useEffect, useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import { fetchAllGroups } from "../../../slicers/groupSlicer";
-import { Table, Flex, Empty, Button,Input, Space } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
-import Highlighter from 'react-highlight-words';
-import NormalCard from '../../../components/content-card/normal-card';
-import DotLoader from '../../../components/content-loading/dot-loader';
+import { Table, Flex, Empty, Button, Input, Space } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
+import Highlighter from "react-highlight-words";
+import NormalCard from "../../../components/content-card/normal-card";
+import DotLoader from "../../../components/content-loading/dot-loader";
 import dateFormat from "dateformat";
-import { AiOutlineArrowDown, AiOutlineArrowUp  } from "react-icons/ai";
-import GroupDrawer from './group-drawer';
-import SearchInputComponent from '../../../components/content-input/search-input';
+import { AiOutlineArrowDown, AiOutlineArrowUp } from "react-icons/ai";
+import GroupDrawer from "./group-drawer";
+import SearchInputComponent from "../../../components/content-input/search-input";
 
 const GroupTable = () => {
-
   const dispatch = useDispatch();
   const { groups } = useSelector((state) => state.group);
-  
+
   const [tableData, setTableData] = useState([]);
-  const [searchText, setSearchText] = useState('');
-  const [searchedColumn, setSearchedColumn] = useState('');
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
   const [sortOrderCreate, setSortOrderCreate] = useState(null);
   const [sortOrderUpdated, setSortOrderUpdated] = useState(null);
-  const [searchAll, setSearchAll] =useState('');
+  const [searchAll, setSearchAll] = useState("");
   const isFatching = useRef(false);
   const searchInput = useRef(null);
 
   const [load, setLoad] = useState(false);
 
   useEffect(() => {
-    setLoad(true)
+    setLoad(true);
     const func = async () => {
       if (isFatching.current) return;
       isFatching.current = true;
       await dispatch(fetchAllGroups());
-    }
+    };
     if (groups.length === 0 && !isFatching.current) {
-      func()
+      func();
     }
-    
+
     if (groups.length > 0) {
-      setTableData(groups.map((group, index) => ({
-        key: index + 1 || 'undefined',
-        groupProductId: group.GroupProductId || null,
-        groupCode: group.GroupCode || 'undefined',
-        groupNameEn: group.GroupNameEn || 'undefined',
-        groupNameTh: group.GroupNameTh || 'undefined',
-        status: group.Active ? "Active" : "Inactive",
-        createBy: group.CreateBy || 'undefined',
-        createDate: new Date(group.CreateDate).toISOString().split("T")[0] || 'undefined',
-        updateBy: group.UpdateBy || 'undefined',
-        UpdateDate: new Date(group.UpdateDate).toISOString().split("T")[0] || 'undefined',
-        supplier: group?.Supplier?.SupplierNameEn || 'undefined',
-        supplierImage: group?.Supplier?.SupplierImage || 'undefined',
-      })));
-      setLoad(false)
+      setTableData(
+        groups.map((group, index) => ({
+          key: index + 1 || "undefined",
+          groupProductId: group.GroupProductId || null,
+          groupCode: group.GroupCode || "undefined",
+          groupNameEn: group.GroupNameEn || "undefined",
+          groupNameTh: group.GroupNameTh || "undefined",
+          status: group.Active ? "Active" : "Inactive",
+          createBy: group.CreateBy || "undefined",
+          createDate:
+            new Date(group.CreateDate).toISOString().split("T")[0] ||
+            "undefined",
+          updateBy: group.UpdateBy || "undefined",
+          UpdateDate:
+            new Date(group.UpdateDate).toISOString().split("T")[0] ||
+            "undefined",
+          supplier: group?.Supplier?.SupplierNameEn || "undefined",
+          supplierImage: group?.Supplier?.SupplierImage || "undefined",
+          createDateText: group.CreateDate
+            ? dateFormat(
+                new Date(group.CreateDate).toISOString().split("T")[0],
+                "mediumDate"
+              ) || "undefined"
+            : "undefined",
+          updateDateText: group.UpdateDate
+            ? dateFormat(
+                new Date(group.UpdateDate).toISOString().split("T")[0],
+                "mediumDate"
+              ) || "undefined"
+            : "undefined",
+        }))
+      );
+      setLoad(false);
     }
 
     setTimeout(() => {
@@ -63,7 +80,9 @@ const GroupTable = () => {
   }, [dispatch, groups]);
 
   const handleTableChange = (_, __, sorter) => {
-    sorter.columnKey === 'CreateDate' ? setSortOrderCreate(sorter.order) : setSortOrderUpdated(sorter.order);
+    sorter.columnKey === "CreateDate"
+      ? setSortOrderCreate(sorter.order)
+      : setSortOrderUpdated(sorter.order);
   };
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -73,16 +92,24 @@ const GroupTable = () => {
   };
   const handleReset = (clearFilters) => {
     clearFilters();
-    setSearchText('');
+    setSearchText("");
   };
   const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0] || ""}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{ marginBottom: 8, display: "block" }}
         />
@@ -125,7 +152,9 @@ const GroupTable = () => {
     ),
     onFilter: (value, record) => {
       if (!value || typeof value !== "string") return false; // ✅ Prevent errors
-      const dataValue = record[dataIndex] ? record[dataIndex].toString().toLowerCase() : "";
+      const dataValue = record[dataIndex]
+        ? record[dataIndex].toString().toLowerCase()
+        : "";
       return dataValue.includes(value.toLowerCase());
     },
     filterDropdownProps: {
@@ -147,25 +176,20 @@ const GroupTable = () => {
         text
       ),
   });
-  
 
   const columns = [
     {
-      title: '#',
-      dataIndex: 'No',
-      key: 'No',
-      width: '1%',
-      render: (_, { key }) => (
-        <div>
-          {key}
-        </div>
-      ),
+      title: "#",
+      dataIndex: "No",
+      key: "No",
+      width: "1%",
+      render: (_, { key }) => <div>{key}</div>,
     },
     {
-      title: 'Product Group Name',
-      dataIndex: 'groupName',
-      key: 'groupName',
-      ...getColumnSearchProps('groupNameEn'),
+      title: "Product Group Name",
+      dataIndex: "groupName",
+      key: "groupName",
+      ...getColumnSearchProps("groupNameEn"),
       render: (_, { groupNameEn }) => (
         <div className="flex items-center gap-2">
           <Flex vertical>
@@ -175,103 +199,111 @@ const GroupTable = () => {
       ),
     },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
       filters: [
         {
-          text: 'Active',
-          value: 'Active',
+          text: "Active",
+          value: "Active",
         },
         {
-          text: 'Inactive',
-          value: 'Inactive',
+          text: "Inactive",
+          value: "Inactive",
         },
       ],
       onFilter: (value, record) => record.status.includes(value), // ✅ Fix: Filter by status
       sorter: (a, b) => a.status.localeCompare(b.status), // ✅ Fix: Sort alphabetically
       render: (_, { status }) => (
         <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          width: "fit-content",
-          margin: "0 auto",
-        }}
-        className={
-          status === "Active"
-            ? "bg-green-50 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300"
-            : "bg-red-50 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300"
-        }
-      >
-        <svg
-          width="7"
-          height="7"
-          viewBox="0 0 12 12"
-          fill={status === "Active" ? "#52c41a" : "#ff4d4f"}
-          xmlns="http://www.w3.org/2000/svg"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            width: "fit-content",
+            margin: "0 auto",
+          }}
+          className={
+            status === "Active"
+              ? "bg-green-50 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300"
+              : "bg-red-50 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300"
+          }
         >
-          <circle cx="6" cy="6" r="6" />
-        </svg>
-        <span>{status}</span>
-      </div>
+          <svg
+            width="7"
+            height="7"
+            viewBox="0 0 12 12"
+            fill={status === "Active" ? "#52c41a" : "#ff4d4f"}
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="6" cy="6" r="6" />
+          </svg>
+          <span>{status}</span>
+        </div>
       ),
     },
     {
       title: (
-          <div className="flex justify-center items-center">
-            Created Date
-            {sortOrderCreate === "ascend" && <AiOutlineArrowDown className="ml-2" />}
-            {sortOrderCreate === "descend" && <AiOutlineArrowUp className="ml-2" />}
+        <div className="flex justify-center items-center">
+          Created Date
+          {sortOrderCreate === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrderCreate === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
+      dataIndex: "CreateDate",
+      key: "createDate",
+      align: "center",
+      sorter: (a, b) => new Date(a.createDate) - new Date(b.createDate),
+      sortDirections: ["ascend", "descend"],
+      render: (_, { createDate }) => {
+        if (!createDate) return <span className="text-gray-500">No Date</span>;
+        return (
+          <div className="text-center">
+            {dateFormat(createDate, "mediumDate")}
           </div>
-        ),
-        dataIndex: "CreateDate",
-        key: "createDate",
-        align: "center",
-        sorter: (a, b) => new Date(a.createDate) - new Date(b.createDate),
-        sortDirections: ["ascend", "descend"],
-        render: (_,{createDate}) => {
-            if (!createDate) return <span className="text-gray-500">No Date</span>;
-            return (
-                <div className="text-center">
-                    {dateFormat(createDate, "mediumDate")}
-                </div>
-            );
-        },
+        );
+      },
     },
     {
       title: (
-          <div className="flex justify-center items-center">
-            Last Updated
-            {sortOrderUpdated === "ascend" && <AiOutlineArrowDown className="ml-2" />}
-            {sortOrderUpdated === "descend" && <AiOutlineArrowUp className="ml-2" />}
+        <div className="flex justify-center items-center">
+          Last Updated
+          {sortOrderUpdated === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrderUpdated === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
+      dataIndex: "LastUpdated",
+      key: "LastUpdated",
+      align: "center",
+      sorter: (a, b) => new Date(a.UpdateDate) - new Date(b.UpdateDate),
+      sortDirections: ["ascend", "descend"],
+      render: (_, { UpdateDate }) => {
+        if (!UpdateDate) return <span className="text-gray-500">No Date</span>;
+        return (
+          <div className="text-center">
+            {dateFormat(UpdateDate, "mediumDate")}
           </div>
-        ),
-        dataIndex: "LastUpdated",
-        key: "LastUpdated",
-        align: "center",
-        sorter: (a, b) => new Date(a.UpdateDate) - new Date(b.UpdateDate),
-        sortDirections: ["ascend", "descend"],
-        render: (_,{UpdateDate}) => {
-            if (!UpdateDate) return <span className="text-gray-500">No Date</span>;
-            return (
-                <div className="text-center">
-                    {dateFormat(UpdateDate, "mediumDate")}
-                </div>
-            );
-        },
+        );
+      },
     },
     {
-      title: 'Created By',
-      dataIndex: 'CreateBy',
-      key: 'CreateBy',
-      ...getColumnSearchProps('createBy'),
-      render: (_, {createBy}) => <a>{createBy}</a>,
+      title: "Created By",
+      dataIndex: "CreateBy",
+      key: "CreateBy",
+      ...getColumnSearchProps("createBy"),
+      render: (_, { createBy }) => <a>{createBy}</a>,
     },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       render: (_, { groupProductId }) => (
         <div className="w-full flex gap-x-3">
           <GroupDrawer groupId={groupProductId} />
@@ -287,17 +319,24 @@ const GroupTable = () => {
     )
   );
 
+  console.log("filteredData ->", filteredData);
 
   return (
     <div>
       <div className="w-full flex justify-center">
         <div className="mb-[100px] w-[530px]">
-          <SearchInputComponent value={searchAll} onChange={setSearchAll} placeholder="Search" />
+          <SearchInputComponent
+            value={searchAll}
+            onChange={setSearchAll}
+            placeholder="Search Product Group Name"
+          />
         </div>
       </div>
       <NormalCard>
         <div className="px-4 py-5 flex items-center justify-between">
-          <div className="text-xl font-primaryMedium bg-white">All Product Group</div>
+          <div className="text-xl font-primaryMedium bg-white">
+            All Product Group
+          </div>
         </div>
         <div className="w-full">
           {load ? (
@@ -309,7 +348,12 @@ const GroupTable = () => {
               <Empty description="No groups found" />
             </div>
           ) : (
-            <Table onChange={handleTableChange} columns={columns} dataSource={tableData && filteredData} position={["bottomCenter"]} />
+            <Table
+              onChange={handleTableChange}
+              columns={columns}
+              dataSource={tableData && filteredData}
+              position={["bottomCenter"]}
+            />
           )}
         </div>
       </NormalCard>

@@ -318,11 +318,13 @@ const SupplierBody = () => {
           image: supplier?.SupplierImage,
           SupplierNameTH: supplier?.SupplierNameTh,
           SupplierNameEN: supplier?.SupplierNameEn,
-          tags: supplier?.Active ? 'Active' : 'Inactive',
+          tags: supplier?.Active ? "Active" : "Inactive",
           CreateBy: supplier?.CreateBy,
           ColorCode: supplier?.ColorCode,
           CreateDate: supplier?.CreateDate,
           UpdateDate: supplier?.UpdateDate,
+          CreateDateText: dateFormat(supplier?.CreateDate, "mediumDate"),
+          UpdateDateText: dateFormat(supplier?.UpdateDate, "mediumDate"),
           Company: supplier?.SupplierCompany?.map((items) => {
             return `${items?.Company?.CompanyNameEN}`;
           }),
