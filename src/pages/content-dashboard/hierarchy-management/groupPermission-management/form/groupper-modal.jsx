@@ -12,7 +12,7 @@ import { ToastifySuccess, ToastifyError } from "../../../../../components/conten
 import { FiEdit3 } from "react-icons/fi";
 import PropTypes from "prop-types";
 import OutlineBTN from "../../../../../components/content-buttons/outline-btn";
-import { GettingUserByRole } from "../../../../../slicers/usermanageSlicer";
+import { GettingAllUserByRole, GettingUserByRole } from "../../../../../slicers/usermanageSlicer";
 import MultiSelect from "../../../../../components/content-selector/multiple-select";
 
 const GroupPerModal = ({ id }) => {
@@ -139,7 +139,12 @@ const GroupPerModal = ({ id }) => {
 
     useEffect(() => {
         const facthManager = async () => {
-            const response = await dispatch(GettingUserByRole('Sale Manager'));
+            let response = null;
+            if(id){
+                response = await dispatch(GettingAllUserByRole('Sale Manager'));
+            }else{
+                response = await dispatch(GettingUserByRole('Sale Manager'));
+            }
             if (response.payload.data.user.length !== 0) {
                 const mapManagers = response.payload.data.user.map((data) => ({
                     label: data.fullname,
@@ -154,7 +159,12 @@ const GroupPerModal = ({ id }) => {
     
     useEffect(() => {
         const facthManager = async () => {
-            const response = await dispatch(GettingUserByRole('Sale'));
+            let response = null;
+            if(id){
+                response = await dispatch(GettingAllUserByRole('Sale'));
+            }else{
+                response = await dispatch(GettingUserByRole('Sale'));
+            }
             if (response.payload.data.user.length !== 0) {
                 const mapManagers = response.payload.data.user.map((data) => ({
                     label: data.fullname,

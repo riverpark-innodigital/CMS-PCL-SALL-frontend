@@ -109,6 +109,16 @@ export const GettingUserByRole = createAsyncThunk('usermanage/GettingUserByRole'
     }
 });
 
+export const GettingAllUserByRole = createAsyncThunk('usermanage/GettingAllUserByRole', async (role) => {
+    try {
+        const response = await AxiosInstance.get(`/usermanagement/users_role/${role}/All`);
+
+        return { status: true, data: response.data.body };
+    } catch (error) {
+        return { status: false, message: error.response?.data?.error };
+    }
+});
+
 const usermanageSlice = createSlice({
     name: 'usermanage',
     initialState: {
