@@ -148,6 +148,11 @@ const GroupForm = ({ groupId }) => {
 
       let response;
 
+      const data = {
+        groupId: groupId,
+        data: formData,
+      };
+
       //   if (groupId) {
       //     // Update existing group
       //     const data = {
@@ -219,7 +224,7 @@ const GroupForm = ({ groupId }) => {
         onOk: async () => {
           try {
             const res = groupId
-              ? await dispatch(updateGroupById({ data: formData }))
+              ? await dispatch(updateGroupById({ data }))
               : await dispatch(createGroup(formData));
             if (!res.payload?.status) throw new Error(res.payload.error);
 
