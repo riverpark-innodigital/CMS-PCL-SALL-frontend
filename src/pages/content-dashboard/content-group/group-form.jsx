@@ -68,7 +68,7 @@ const GroupForm = ({ groupId }) => {
       await setGroupCode(response?.payload?.data?.GroupCode || "");
       await setGroupNameEn(response?.payload?.data?.GroupNameEn || "");
       await setSupSelectd(supMap || []);
-      await setStatus(response?.payload?.data?.Active === "true");
+      await setStatus(response?.payload?.data?.Active === true);
       if (response?.payload?.data?.ImageName) {
         await setFileList([
           {
