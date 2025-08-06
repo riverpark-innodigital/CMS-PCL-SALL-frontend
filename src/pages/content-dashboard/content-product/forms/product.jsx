@@ -134,7 +134,7 @@ const ProductForm = () => {
   }, [arrow]);
 
   const allowedExtensionsNormal = [".png", ".jpg", ".jpeg"];
-//   const allowedExtensionsFile = [".pdf", ".mov", ".avi"];
+  //   const allowedExtensionsFile = [".pdf", ".mov", ".avi"];
   const allowedExtensionsFile = [".pdf"];
   const allowedExtensionsVideo = [".mp4", ".mov", ".avi"];
 
@@ -254,12 +254,15 @@ const ProductForm = () => {
   };
 
   const handleFileMain = ({ file }) => setImageMain(file.originFileObj);
-  const handleFileMedia = ({ file }) => {
-    if (file.status !== "removed") {
-      setMeadia(file.originFileObj);
-      setMediaRemove(false);
-    }
+
+  const handleFileMedia = ({ fileList }) => {
+    const kept = fileList.filter((item) => item.status !== "removed");
+
+    const originFiles = kept.map((item) => item.originFileObj);
+    setMeadia(originFiles);
+    setMediaRemove(false);
   };
+
   const handleFileChidren = ({ file }) => {
     const isDuplicate = imageChildren.some(
       (image) => image.file.uid === file.uid
@@ -757,9 +760,6 @@ const ProductForm = () => {
   //     }
   // };
 
-  console.log("id ->", id);
-  console.log("supplier ->", supplier);
-  console.log("supplierOption ->", supplierOption);
 
   return (
     <div className="mb-10 2xl:mx-[20px] md:mx-[30px]">
@@ -848,13 +848,13 @@ const ProductForm = () => {
                 <div>Loading</div>
               ) : (
                 <Dragger
-                  maxCount={1}
-                  name="file"
+                  name="mediaFiles"
+                  multiple
                   listType="picture"
-                  onChange={handleFileMain}
-                  beforeUpload={beforeUpload}
-                  defaultFileList={defaultImageMain}
-                  className="bg-transparent"
+                  onChange={handleFileMedia}
+                  beforeUpload={beforeUploadVedio}
+                  defaultFileList={defaultMedia}
+                  onRemove={() => setMediaRemove(true)}
                 >
                   <p className="ant-upload-drag-icon">
                     <div className="flex w-full justify-center">
@@ -996,7 +996,7 @@ const ProductForm = () => {
                   onChange={handleFileMedia}
                   beforeUpload={beforeUploadVedio}
                   defaultFileList={defaultMedia}
-                  maxCount={1}
+                  multiple
                   onRemove={() => setMediaRemove(true)}
                 >
                   <p className="ant-upload-drag-icon">
