@@ -273,8 +273,13 @@ const ProductForm = () => {
     const kept = fileList.filter((item) => item.status !== "removed");
 
     const originFiles = kept.map((item) => item.originFileObj);
-    setMeadia(originFiles);
-    setMediaRemove(false);
+    if (originFiles.status === 'removed') {
+      setMeadia(null);
+      setMediaRemove(true);
+    } else {
+      setMeadia(originFiles);
+      setMediaRemove(false);
+      }
   };
 
   const handleFileChidren = ({ file }) => {
