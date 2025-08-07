@@ -143,6 +143,7 @@ const ProductForm = () => {
     const maxSizeInBytes = 5 * 1024 * 1024;
     if (!allowedExtensionsNormal.includes(extension)) {
       message.error(`${file.name} has an unsupported file extension.`);
+      setFileOverSize(true);
       return Upload.LIST_IGNORE; // Prevents upload
     }
 
@@ -159,6 +160,7 @@ const ProductForm = () => {
     const maxSizeInBytes = 50 * 1024 * 1024;
     if (!allowedExtensionsFile.includes(extension)) {
       message.error(`${file.name} has an unsupported file extension.`);
+      setFileOverSize(true);
       return Upload.LIST_IGNORE; // Prevents upload
     }
 
@@ -175,6 +177,7 @@ const ProductForm = () => {
     const maxSizeInBytes = 100 * 1024 * 1024;
     if (!allowedExtensionsVideo.includes(extension)) {
       message.error(`${file.name} has an unsupported file extension.`);
+      setFileOverSize(true);
       return Upload.LIST_IGNORE; // Prevents upload
     }
 
@@ -852,7 +855,7 @@ const ProductForm = () => {
                   multiple
                   listType="picture"
                   onChange={handleFileMedia}
-                  beforeUpload={beforeUploadVedio}
+                  beforeUpload={beforeUpload}
                   defaultFileList={defaultMedia}
                   onRemove={() => setMediaRemove(true)}
                 >
