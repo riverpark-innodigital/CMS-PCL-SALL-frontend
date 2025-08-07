@@ -677,7 +677,7 @@ const ProductForm = () => {
       Data.append("ProductDescriptionHeaderEn", descriptionHeaderEN);
       Data.append("ProductDescriptionDetailEn", descriptionEN);
       Data.append("ProductImageMain", imageMain);
-      Data.append("ProductUpVideo", Meadia);
+      Data.append("ProductUpVideo", [Meadia]);
       Data.append("RemoveVideo", mediaRemove);
       Data.append("RemoveImageMain", imageMainRemove);
       Data.append("RemoveImageChildren", imageChildrenRemove);
