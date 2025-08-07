@@ -852,11 +852,10 @@ const ProductForm = () => {
               ) : (
                 <Dragger
                   name="mediaFiles"
-                  multiple
                   listType="picture"
-                  onChange={handleFileMedia}
+                  onChange={handleFileMain}
                   beforeUpload={beforeUpload}
-                  defaultFileList={defaultMedia}
+                  defaultFileList={defaultImageMain}
                   onRemove={() => setMediaRemove(true)}
                 >
                   <p className="ant-upload-drag-icon">
@@ -885,6 +884,7 @@ const ProductForm = () => {
               ) : (
                 <Dragger
                   name="file"
+                  multiple
                   listType="picture"
                   onChange={handleFileChidren}
                   beforeUpload={beforeUpload}
@@ -942,6 +942,7 @@ const ProductForm = () => {
               <Dragger
                 maxCount={10}
                 name="file"
+                multiple
                 listType="picture"
                 onChange={handlePresentFile}
                 beforeUpload={beforeUploadFile}
@@ -999,7 +1000,6 @@ const ProductForm = () => {
                   onChange={handleFileMedia}
                   beforeUpload={beforeUploadVedio}
                   defaultFileList={defaultMedia}
-                  multiple
                   onRemove={() => setMediaRemove(true)}
                 >
                   <p className="ant-upload-drag-icon">
