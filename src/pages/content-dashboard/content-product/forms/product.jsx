@@ -269,17 +269,14 @@ const ProductForm = () => {
     }
   }
 
-  const handleFileMedia = ({ fileList }) => {
-    const kept = fileList.filter((item) => item.status !== "removed");
-
-    const originFiles = kept.map((item) => item.originFileObj);
-    if (originFiles.status === 'removed') {
+  const handleFileMedia = ({ file }) => {
+    if (file.status === 'removed') {
       setMeadia(null);
       setMediaRemove(true);
     } else {
-      setMeadia(originFiles);
+      setMeadia(file.originFileObj);
       setMediaRemove(false);
-      }
+    }
   };
 
   const handleFileChidren = ({ file }) => {
@@ -355,7 +352,7 @@ const ProductForm = () => {
       Data.append("ProductDescriptionHeaderEn", descriptionHeaderEN);
       Data.append("ProductDescriptionDetailEn", descriptionEN);
       Data.append("ProductImageMain", imageMain);
-      Data.append("ProductUpVideo", Meadia[0]);
+      Data.append("ProductUpVideo", Meadia);
       Data.append("GroupProductId", Group);
       Data.append("ModelProductId", model);
       Data.append("CompanyId", comandbuSplit[0]);
@@ -682,7 +679,7 @@ const ProductForm = () => {
       Data.append("ProductDescriptionHeaderEn", descriptionHeaderEN);
       Data.append("ProductDescriptionDetailEn", descriptionEN);
       Data.append("ProductImageMain", imageMain);
-      Data.append("ProductUpVideo", Meadia[0]);
+      Data.append("ProductUpVideo", Meadia);
       Data.append("RemoveVideo", mediaRemove);
       Data.append("RemoveImageMain", imageMainRemove);
       Data.append("RemoveImageChildren", imageChildrenRemove);
