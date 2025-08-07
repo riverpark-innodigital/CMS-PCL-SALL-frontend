@@ -71,7 +71,7 @@ const CompanyDrawer = ({ comId }) => {
               className="flex px-2 py-1 gap-x-2 items-center rounded-md hover:bg-gray-100 duration-100 ease-in-out"
             >
               <IoArrowBack />
-              <span>Back to Companys</span>
+              <span>Back to Company</span>
             </button>
           </div>
           <div className="my-2 flex justify-end">
@@ -115,7 +115,11 @@ const CompanyDrawer = ({ comId }) => {
                   <span className="font-primaryMedium text-gray-800 text-[16px]">
                     Bussiness Unit
                   </span>
-                  <span className="block">{currentCompany?.BusinessUnits?.map((data) => `${data.BusinessUnit.Name}, `)}</span>
+                  <span className="block">
+                    {currentCompany?.BusinessUnits?.map(
+                      (data) => `${data.BusinessUnit.Name}, `
+                    )}
+                  </span>
                 </div>
                 <div className="my-4">
                   <span className="font-primaryMedium text-gray-800 text-[16px]">
@@ -137,7 +141,7 @@ const CompanyDrawer = ({ comId }) => {
                   Company Description
                 </div>
                 <div className="w-full text-wrap px-2 py-2 bg-gray-100 rounded-md">
-                  {currentCompany?.DescriptionEN}
+                  {currentCompany?.DescriptionEN||"No data"}
                 </div>
               </AccordionBody>
             </Accordion>
