@@ -79,6 +79,9 @@ const ProductForm = () => {
   const [imageChildren, setImageChildren] = useState([]);
   const [fileChildren, setfileChildren] = useState([]);
   const [mediaRemove, setMediaRemove] = useState(false);
+  const [imageMainRemove, setImageMainRemove] = useState(false);
+  const [imageChildrenRemove, setImageChildrenRemove] = useState([]);
+  const [presentFileRemove, setPresentFileRemove] = useState([]);
   const [Meadia, setMeadia] = useState([]);
   const [MeadiaLink, setMeadiaLink] = useState("");
   const [Group, setGroup] = useState(null);
@@ -256,7 +259,15 @@ const ProductForm = () => {
     ]);
   };
 
-  const handleFileMain = ({ file }) => setImageMain(file.originFileObj);
+  const handleFileMain = ({ file }) => {
+    if (file.status === 'removed') {
+      setImageMain(null);
+      setImageMainRemove(true);
+    } else {
+      setImageMain(file.originFileObj);
+      setImageMainRemove(false);
+    }
+  }
 
   const handleFileMedia = ({ fileList }) => {
     const kept = fileList.filter((item) => item.status !== "removed");
@@ -339,7 +350,7 @@ const ProductForm = () => {
       Data.append("ProductDescriptionHeaderEn", descriptionHeaderEN);
       Data.append("ProductDescriptionDetailEn", descriptionEN);
       Data.append("ProductImageMain", imageMain);
-      Data.append("ProductUpVideo", Meadia);
+      Data.append("ProductUpVideo", Meadia[0]);
       Data.append("GroupProductId", Group);
       Data.append("ModelProductId", model);
       Data.append("CompanyId", comandbuSplit[0]);
@@ -668,6 +679,9 @@ const ProductForm = () => {
       Data.append("ProductImageMain", imageMain);
       Data.append("ProductUpVideo", Meadia);
       Data.append("RemoveVideo", mediaRemove);
+      Data.append("RemoveImageMain", imageMainRemove);
+      Data.append("RemoveImageChildren", imageChildrenRemove);
+      Data.append("RemovePresentFileChildren", presentFileRemove);
       Data.append("GroupProductId", Group);
       Data.append("ModelProductId", model);
       Data.append("CompanyId", comandbuSplit[0]);
@@ -856,7 +870,7 @@ const ProductForm = () => {
                   onChange={handleFileMain}
                   beforeUpload={beforeUpload}
                   defaultFileList={defaultImageMain}
-                  onRemove={() => setMediaRemove(true)}
+                  onRemove={() => setImageMainRemove(true)}
                 >
                   <p className="ant-upload-drag-icon">
                     <div className="flex w-full justify-center">
@@ -889,6 +903,9 @@ const ProductForm = () => {
                   onChange={handleFileChidren}
                   beforeUpload={beforeUpload}
                   defaultFileList={defaultImageChildren}
+                  onRemove={(file) => {
+                    setImageChildrenRemove((prev) => [...prev, file.name]);
+                  }}
                 >
                   <p className="ant-upload-drag-icon">
                     <div className="flex w-full justify-center">
@@ -947,6 +964,9 @@ const ProductForm = () => {
                 onChange={handlePresentFile}
                 beforeUpload={beforeUploadFile}
                 defaultFileList={defaultPresentFile}
+                onRemove={(file) => {
+                    setPresentFileRemove((prev) => [...prev, file.name]);
+                }}
               >
                 <p className="ant-upload-drag-icon">
                   <div className="flex w-full justify-center">
