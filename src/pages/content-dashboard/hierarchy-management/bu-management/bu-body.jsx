@@ -28,16 +28,18 @@ const CompanyBody = () => {
     current: 1,
     pageSize: 10,
   });
-
   const handleTableChange = (pagination, filters, sorter) => {
     setPaginationInfo({
       current: pagination.current,
       pageSize: pagination.pageSize,
     });
 
-    if (sorter.columnKey === "createdDate") {
+    setSortOrderCreate(null);
+    setSortOrderUpdated(null);
+
+    if (sorter.columnKey === "CreateDate") {
       setSortOrderCreate(sorter.order);
-    } else {
+    } else if (sorter.columnKey === "UpdateDate") {
       setSortOrderUpdated(sorter.order);
     }
   };
