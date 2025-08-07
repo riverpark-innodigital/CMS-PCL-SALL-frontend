@@ -71,6 +71,7 @@ export const CreateCompany = () => {
     const extension = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
     if (!allowedExtensionsNormal.includes(extension)) {
       message.error(`${file.name} has an unsupported file extension.`);
+      setFileOverSize(true);
       return Upload.LIST_IGNORE; // Prevents upload
     }
 
@@ -88,6 +89,7 @@ export const CreateCompany = () => {
     const extension = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
     if (!allowedExtensionsNormal.includes(extension)) {
       message.error(`${file.name} has an unsupported file extension.`);
+      setFileOverSize(true);
       return Upload.LIST_IGNORE; // Prevents upload
     }
 
