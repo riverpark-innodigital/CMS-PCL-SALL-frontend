@@ -100,7 +100,7 @@ const CompanyBody = () => {
           >
             Reset
           </Button>
-          <Button
+          {/* <Button
             type="link"
             size="small"
             onClick={() => {
@@ -112,7 +112,7 @@ const CompanyBody = () => {
             }}
           >
             Filter
-          </Button>
+          </Button> */}
           <Button
             type="link"
             size="small"
