@@ -17,8 +17,15 @@ const GroupPermissionContent = () => {
   );
   const [isLoading, setIsLoading] = useState(false);
   const [tableData, setTableData] = useState([]);
-  const [sortOrderCreate, setSortOrderCreate] = useState(null);
-  const [sortOrderUpdated, setSortOrderUpdated] = useState(null);
+  const [sortOrders, setSortOrders] = useState({
+    Saleteam: null,
+    teamLader: null,
+    BU: null,
+    status: null,
+    createdDate: null,
+    updatedDate: null,
+    CreateBy: null,
+  });
   const isFacing = useRef(false);
   const [searchText, setSearchText] = useState("");
   const [searchAll, setSearchAll] = useState("");
@@ -36,7 +43,6 @@ const GroupPermissionContent = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log(allGroupPermission);
     setIsLoading(true);
     if (allGroupPermission.length > 0) {
       setTableData(
@@ -48,8 +54,8 @@ const GroupPermissionContent = () => {
           Active: items?.status ? "Active" : "Inactive",
           member: items?.member,
           BU: items?.com_bu,
-          CreateDate: items?.createdDate,
-          UpdateDate: items?.updatedDate,
+          CreateDate: dateFormat(items?.createdDate, "mediumDate"),
+          UpdateDate: dateFormat(items?.updatedDate, "mediumDate"),
           CreateDateText: items?.createdDate
             ? dateFormat(items?.createdDate, "mediumDate")
             : "-",
@@ -183,38 +189,78 @@ const GroupPermissionContent = () => {
       ),
     },
     {
-      title: "Sale team name",
+      title: (
+        <div className="flex items-center">
+          Sale team name
+          {sortOrders.Saleteam === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.Saleteam === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "Saleteam",
       key: "Saleteam",
       ...getColumnSearchProps("Saleteam"),
+      sorter: (a, b) => a.Saleteam.localeCompare(b.Saleteam),
+      sortOrder: sortOrders.Saleteam,
       render: (_, { SaleTeamNameEN }) => <div>{SaleTeamNameEN}</div>,
     },
     {
-      title: "Team Lader",
+      title: (
+        <div className="flex items-center">
+          Team Leader
+          {sortOrders.teamLader === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.teamLader === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "teamLader",
       key: "teamLader",
       ...getColumnSearchProps("teamLader"),
+      sorter: (a, b) => a.teamLader.localeCompare(b.teamLader),
+      sortOrder: sortOrders.teamLader,
       render: (_, { teamLader }) => <div>{teamLader}</div>,
     },
     {
-      title: "Company & BU",
+      title: (
+        <div className="flex items-center">
+          Company & BU
+          {sortOrders.BU === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.BU === "descend" && <AiOutlineArrowUp className="ml-2" />}
+        </div>
+      ),
       dataIndex: "BU",
       key: "BU",
       ...getColumnSearchProps("BU"),
+      sorter: (a, b) => a.BU.localeCompare(b.BU),
+      sortOrder: sortOrders.BU,
       render: (_, { BU }) => <div>{BU}</div>,
     },
     {
       title: "Member",
       dataIndex: "Member",
       key: "Member",
-      sorter: {
-        compare: (a, b) => a.chinese - b.chinese,
-        multiple: 3,
-      },
       render: (_, { member }) => <div>{member}</div>,
     },
     {
-      title: "Status",
+      title: (
+        <div className="flex justify-center items-center">
+          Status
+          {sortOrders.status === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.status === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       key: "status",
       align: "center",
       filters: [
@@ -231,7 +277,8 @@ const GroupPermissionContent = () => {
         const tagValue = record.tags ? record.tags.toString() : "";
         return tagValue.includes(value);
       },
-      sorter: (a, b) => (a.tags || "").localeCompare(b.tags || ""), // ✅ Handles undefined values
+      sorter: (a, b) => a.status.localeCompare(b.status),
+      sortOrder: sortOrders.status,
       render: (_, { Active }) => (
         <div
           style={{
@@ -264,10 +311,10 @@ const GroupPermissionContent = () => {
       title: (
         <div className="flex justify-center items-center">
           Created Date
-          {sortOrderCreate === "ascend" && (
+          {sortOrders.createdDate === "ascend" && (
             <AiOutlineArrowDown className="ml-2" />
           )}
-          {sortOrderCreate === "descend" && (
+          {sortOrders.createdDate === "descend" && (
             <AiOutlineArrowUp className="ml-2" />
           )}
         </div>
@@ -276,6 +323,7 @@ const GroupPermissionContent = () => {
       key: "createdDate",
       align: "center",
       sorter: (a, b) => new Date(a.createdDate) - new Date(b.createdDate),
+      sortOrder: sortOrders.createdDate,
       sortDirections: ["ascend", "descend"],
       render: (_, { CreateDate }) => {
         if (!CreateDate) return <span className="text-gray-500">No Date</span>;
@@ -291,10 +339,10 @@ const GroupPermissionContent = () => {
       title: (
         <div className="flex justify-center items-center">
           Last Updated
-          {sortOrderUpdated === "ascend" && (
+          {sortOrders.updatedDate === "ascend" && (
             <AiOutlineArrowDown className="ml-2" />
           )}
-          {sortOrderUpdated === "descend" && (
+          {sortOrders.updatedDate === "descend" && (
             <AiOutlineArrowUp className="ml-2" />
           )}
         </div>
@@ -303,6 +351,7 @@ const GroupPermissionContent = () => {
       key: "updatedDate",
       align: "center",
       sorter: (a, b) => new Date(a.updatedDate) - new Date(b.updatedDate),
+      sortOrder: sortOrders.updatedDate,
       sortDirections: ["ascend", "descend"],
       render: (_, { UpdateDate }) => {
         if (!UpdateDate) return <span className="text-gray-500">No Date</span>;
@@ -315,10 +364,22 @@ const GroupPermissionContent = () => {
       },
     },
     {
-      title: "Created By",
+      title: (
+        <div className="flex items-center">
+          Created By
+          {sortOrders.CreateBy === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.CreateBy === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "CreateBy",
       key: "CreateBy",
       ...getColumnSearchProps("CreateBy"),
+      sorter: (a, b) => a.CreateBy.localeCompare(b.CreateBy),
+      sortOrder: sortOrders.CreateBy,
       render: (_, { CreateBy }) => <div>{CreateBy}</div>,
     },
     {
@@ -339,10 +400,29 @@ const GroupPermissionContent = () => {
       pageSize: pagination.pageSize,
     });
 
-    if (sorter.columnKey === "createdDate") {
-      setSortOrderCreate(sorter.order);
+    if (Array.isArray(sorter)) {
+      const firstSorter = sorter[0] || {};
+      setSortOrders({
+        Saleteam: null,
+        teamLader: null,
+        BU: null,
+        status: null,
+        createdDate: null,
+        updatedDate: null,
+        CreateBy: null,
+        [firstSorter.columnKey]: firstSorter.order || null,
+      });
     } else {
-      setSortOrderUpdated(sorter.order);
+      setSortOrders({
+        Saleteam: null,
+        teamLader: null,
+        BU: null,
+        status: null,
+        createdDate: null,
+        updatedDate: null,
+        CreateBy: null,
+        [sorter.columnKey]: sorter.order || null,
+      });
     }
   };
 
@@ -365,7 +445,7 @@ const GroupPermissionContent = () => {
       </div>
       <div className="bg-white drop-shadow-md rounded-[10px]">
         <div className="px-[24px] py-[20px] text-[18px] font-primaryMedium">
-          <span>All Group & Sale team</span>
+          <span>All Sale team</span>
         </div>
         <div className="w-full">
           {isLoading ? (

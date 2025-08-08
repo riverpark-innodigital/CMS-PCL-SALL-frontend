@@ -200,7 +200,7 @@ const GroupPerModal = ({ id }) => {
             </button>
         }
         <Modal
-            title="Create Group & Sale team"
+            title="Create Sale team"
             centered
             open={open}
             onOk={() => setOpen(false)}
@@ -213,7 +213,7 @@ const GroupPerModal = ({ id }) => {
                     <SwitchComponent tooltipTitle="" onChange={onChange} value={active} />
                     <div>
                         <span className="font-primaryMedium">Available for active</span>
-                        <span className="block">The Product Group is available for use.</span>
+                        <span className="block">The Sale team is available for use.</span>
                     </div>
                 </div>
                 <div className="grid grid-cols-2 gap-[20px] mb-[20px]">

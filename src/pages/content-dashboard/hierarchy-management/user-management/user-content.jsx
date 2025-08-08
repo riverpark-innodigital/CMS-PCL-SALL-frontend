@@ -20,7 +20,14 @@ const UserContent = () => {
   const [searchText, setSearchText] = useState("");
   const [searchAll, setSearchAll] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
-  const [sortOrderUpdated, setSortOrderUpdated] = useState(null);
+  const [sortOrders, setSortOrders] = useState({
+    Fullname: null,
+    saleteam: null,
+    role: null,
+    status: null,
+    updatedAt: null,
+    updatedBy: null,
+  });
   const searchInput = useRef(null);
   const isFacing = useRef(false);
   const navigate = useNavigate();
@@ -39,7 +46,6 @@ const UserContent = () => {
     setIsLoading(true);
     if (allUsers.length > 0) {
       const user = allUsers;
-      console.log(user);
       setTableData(
         user.map((user, index) => ({
           key: index + 1,
@@ -178,28 +184,82 @@ const UserContent = () => {
       ),
     },
     {
-      title: "Name",
+      title: (
+        <div className="flex items-center">
+          Name
+          {sortOrders.Fullname === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.Fullname === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "Fullname",
       key: "Fullname",
       ...getColumnSearchProps("Fullname"),
+      sorter: (a, b) => a.Fullname.localeCompare(b.Fullname),
+      sortOrder: sortOrders.Fullname,
       render: (_, { Fullname }) => <div>{Fullname}</div>,
     },
     {
-      title: "Sale team",
-      dataIndex: "role",
-      key: "role",
-      ...getColumnSearchProps("role"),
-      render: (_, { role }) => <div>{role}</div>,
-    },
-    {
-      title: "Role",
+      title: (
+        <div className="flex items-center">
+          Sale team
+          {sortOrders.saleteam === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.saleteam === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "saleteam",
       key: "saleteam",
       ...getColumnSearchProps("saleteam"),
+      sorter: (a, b) => a.saleteam.localeCompare(b.saleteam),
+      sortOrder: sortOrders.saleteam,
       render: (_, { saleteam }) => <div>{saleteam}</div>,
     },
     {
-      title: "Status",
+      title: (
+        <div className="flex items-center">
+          Role
+          {sortOrders.role === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.role === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
+      dataIndex: "role",
+      key: "role",
+      ...getColumnSearchProps("role"),
+      sorter: (a, b) => {
+        const orderMap = {
+          "Administrator": 1,
+          "Sale": 2,
+          "Sale Manager": 3,
+          "No data": 99 
+        };
+        return orderMap[a.role] - orderMap[b.role];
+      },
+      sortOrder: sortOrders.role,
+      render: (_, { role }) => <div>{role}</div>,
+    },
+    {
+      title: (
+        <div className="flex items-center">
+          Status
+          {sortOrders.status === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.status === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "status",
       key: "status",
       filters: [
@@ -214,6 +274,7 @@ const UserContent = () => {
       ],
       onFilter: (value, record) => record.status.includes(value), // ✅ Fix: Filter by status
       sorter: (a, b) => a.status.localeCompare(b.status), // ✅ Fix: Sort alphabetically
+      sortOrder: sortOrders.status,
       render: (_, { status }) => (
         <div
           style={{
@@ -246,10 +307,10 @@ const UserContent = () => {
       title: (
         <div className="flex justify-center items-center">
           Last Updated
-          {sortOrderUpdated === "ascend" && (
+          {sortOrders.updatedAt === "ascend" && (
             <AiOutlineArrowDown className="ml-2" />
           )}
-          {sortOrderUpdated === "descend" && (
+          {sortOrders.updatedAt === "descend" && (
             <AiOutlineArrowUp className="ml-2" />
           )}
         </div>
@@ -258,6 +319,7 @@ const UserContent = () => {
       key: "updatedAt",
       align: "center",
       sorter: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt),
+      sortOrder: sortOrders.updatedAt,
       sortDirections: ["ascend", "descend"],
       render: (_, { updatedAt }) => {
         if (!updatedAt) return <span className="text-gray-500">No Date</span>;
@@ -270,10 +332,22 @@ const UserContent = () => {
       },
     },
     {
-      title: "Updated by",
+      title: (
+        <div className="flex items-center">
+          Updated by
+          {sortOrders.updatedBy === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.updatedBy === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "updatedBy",
       key: "updatedBy",
       ...getColumnSearchProps("updatedBy"),
+      sorter: (a, b) => a.updatedBy.localeCompare(b.updatedBy),
+      sortOrder: sortOrders.updatedBy,
       render: (_, { updatedBy }) => <div>{updatedBy}</div>,
     },
     {
@@ -302,9 +376,28 @@ const UserContent = () => {
       current: pagination.current,
       pageSize: pagination.pageSize,
     });
-    sorter.columnKey === "createdDate"
-      ? setSortOrderUpdated(sorter.order)
-      : setSortOrderUpdated(sorter.order);
+    if (Array.isArray(sorter)) {
+      const firstSorter = sorter[0] || {};
+      setSortOrders({
+        Fullname: null,
+        saleteam: null,
+        role: null,
+        status: null,
+        updatedAt: null,
+        updatedBy: null,
+        [firstSorter.columnKey]: firstSorter.order || null,
+      });
+    } else {
+      setSortOrders({
+        Fullname: null,
+        saleteam: null,
+        role: null,
+        status: null,
+        updatedAt: null,
+        updatedBy: null,
+        [sorter.columnKey]: sorter.order || null,
+      });
+    }
   };
 
   const filteredData = tableData.filter((item) =>

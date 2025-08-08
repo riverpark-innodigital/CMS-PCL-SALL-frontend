@@ -13,7 +13,12 @@ const OverviewContent = () => {
   const [tableData, setTableData] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
-  const [sortOrderViewer, setSortOrderViewer] = useState(null);
+  const [sortOrders, setSortOrders] = useState({
+    product: null,
+    ProductGroup: null,
+    supplier: null,
+    view: null,
+  });
   const searchInput = useRef(null);
   const dispatch = useDispatch();
   const overview = useSelector((state) => state.dashboard.overview);
@@ -176,10 +181,22 @@ const OverviewContent = () => {
       ),
     },
     {
-      title: "Product",
+      title: (
+        <div className="flex items-center">
+          Product
+          {sortOrders.product === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.product === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "product",
       key: "product",
       ...getColumnSearchProps("product"),
+      sorter: (a, b) => a.product.localeCompare(b.product),
+      sortOrder: sortOrders.product,
       render: (_, { product, productImage }) => (
         <div className="flex gap-x-3 items-center">
           {productImage ? (
@@ -204,10 +221,22 @@ const OverviewContent = () => {
       ),
     },
     {
-      title: "Product Group",
+      title: (
+        <div className="flex items-center">
+          Product Group
+          {sortOrders.ProductGroup === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.ProductGroup === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "ProductGroup",
       key: "ProductGroup",
       ...getColumnSearchProps("ProductGroup"),
+      sorter: (a, b) => a.ProductGroup.localeCompare(b.ProductGroup),
+      sortOrder: sortOrders.ProductGroup,
       render: (_, { ProductGroup }) => (
         <div className="flex gap-x-3 items-center">
           <span>{ProductGroup}</span>
@@ -215,10 +244,22 @@ const OverviewContent = () => {
       ),
     },
     {
-      title: "Supplier",
+      title: (
+        <div className="flex items-center">
+          Supplier
+          {sortOrders.supplier === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.supplier === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "supplier",
       key: "supplier",
       ...getColumnSearchProps("supplier"),
+      sorter: (a, b) => a.supplier.localeCompare(b.supplier),
+      sortOrder: sortOrders.supplier,
       render: (_, { supplier, supplierImage }) => (
         <div className="flex gap-x-3 items-center">
           {supplierImage ? (
@@ -244,10 +285,10 @@ const OverviewContent = () => {
       title: (
         <div className="flex justify-center items-center">
           Qty of Presentations
-          {sortOrderViewer === "ascend" && (
+          {sortOrders.view === "ascend" && (
             <AiOutlineArrowDown className="ml-2" />
           )}
-          {sortOrderViewer === "descend" && (
+          {sortOrders.view === "descend" && (
             <AiOutlineArrowUp className="ml-2" />
           )}
         </div>
@@ -256,6 +297,7 @@ const OverviewContent = () => {
       key: "view",
       align: "center",
       sorter: (a, b) => a.view - b.view,
+      sortOrder: sortOrders.view,
       sortDirections: ["ascend", "descend"],
       render: (_, { view }) => {
         return <div>{view}</div>;
@@ -279,7 +321,24 @@ const OverviewContent = () => {
       current: pagination.current,
       pageSize: pagination.pageSize,
     });
-    sorter.columnKey === "view" && setSortOrderViewer(sorter.order);
+    if (Array.isArray(sorter)) {
+      const firstSorter = sorter[0] || {};
+      setSortOrders({
+        product: null,
+        ProductGroup: null,
+        supplier: null,
+        view: null,
+        [firstSorter.columnKey]: firstSorter.order || null,
+      });
+    } else {
+      setSortOrders({
+        product: null,
+        ProductGroup: null,
+        supplier: null,
+        view: null,
+        [sorter.columnKey]: sorter.order || null,
+      });
+    }
   };
 
   return (

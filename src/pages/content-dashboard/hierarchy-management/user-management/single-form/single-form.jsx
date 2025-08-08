@@ -370,7 +370,7 @@ const SingleForm = () => {
                                 <input {...getInputProps()} />
                                 <img src={Upload} alt="" className="mb-3" />
                                 <span className="text-sm text-red-500 font-medium">Click to upload <span className="text-xs text-gray-400">or drag and drop</span></span>
-                                <span className="text-xs text-gray-400">PNG, JPG</span>
+                                <span className="text-xs text-gray-400">PNG, JPG (Maximum 3 MB)</span>
                             </div>
                             </div>
                     </div>

@@ -44,21 +44,14 @@ const TopProduct = () => {
             </div>
             {
                 isLoading ?
-                <div className="px-[24px] pt-[12px] pb-[24px]">
-                    <div className="flex w-full gap-x-[16px]">
-                        <SingleLaoding otherStyle="w-[111px] h-[111px]" />
-                        <div className="w-full flex justify-between gap-x-[16px]">
-                            <div className="flex gap-x-3">
-                                <SingleLaoding otherStyle="w-[80px] h-[60px]" />
-                                <SingleLaoding otherStyle="w-[250px] h-[20px]" />
-                            </div>
-                            <div className="flex items-end">
-                                <div>
-                                    <SingleLaoding otherStyle="h-[40px] w-[100px]" /> 
-                                    <SingleLaoding otherStyle="h-[30px] w-[100px mt-2" /> 
-                                </div>
-                            </div>
-                        </div>
+                <div className="flex flex-col w-full pt-3 pb-6">
+                    <div className='flex gap-3 justify-between '>
+                        <SingleLaoding otherStyle="w-[120px] h-[90px]" />
+                        <SingleLaoding otherStyle="w-[250px] h-[30px]" />
+                    </div>
+                    <div className='flex flex-col items-end'>
+                        <SingleLaoding otherStyle="h-[40px] w-[100px]" />
+                        <SingleLaoding otherStyle="h-[30px] w-[100px] mt-2" />
                     </div>
                 </div>
                 :
