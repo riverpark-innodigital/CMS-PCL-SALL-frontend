@@ -1,28 +1,27 @@
-import { Table, Button,Input,Space } from 'antd';
-import SupplierCanvas from './supelier-canvas';
-import { useState, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from'react-redux';
-import { fetchAllSupplier } from '../../../slicers/supplierSlicer';
+import { Table, Button, Input, Space } from "antd";
+import SupplierCanvas from "./supelier-canvas";
+import { useState, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllSupplier } from "../../../slicers/supplierSlicer";
 // import SupplierModal from './supelier-modal';
-import DotLoader from '../../../components/content-loading/dot-loader';
+import DotLoader from "../../../components/content-loading/dot-loader";
 import NormalCard from "../../../components/content-card/normal-card";
 import NotFound from "../../../assets/images/imgs/error.png";
-import { SearchOutlined } from '@ant-design/icons';
-import Highlighter from 'react-highlight-words';
+import { SearchOutlined } from "@ant-design/icons";
+import Highlighter from "react-highlight-words";
 import dateFormat from "dateformat";
 import { AiOutlineArrowDown, AiOutlineArrowUp } from "react-icons/ai";
-import SearchInputComponent from '../../../components/content-input/search-input';
+import SearchInputComponent from "../../../components/content-input/search-input";
 
 const SupplierBody = () => {
-
   const dispatch = useDispatch();
   const suppliers = useSelector((state) => state.supplier.suppliers);
   const isFacthing = useRef(false);
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
-  const [searchText, setSearchText] = useState('');
-  const [searchAll, setSearchAll] = useState('');
-  const [searchedColumn, setSearchedColumn] = useState('');
+  const [searchText, setSearchText] = useState("");
+  const [searchAll, setSearchAll] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
   const [sortOrderCreate, setSortOrderCreate] = useState(null);
   const [sortOrderUpdated, setSortOrderUpdated] = useState(null);
   const searchInput = useRef(null);
@@ -36,10 +35,12 @@ const SupplierBody = () => {
       current: pagination.current,
       pageSize: pagination.pageSize,
     });
+    setSortOrderCreate(null);
+    setSortOrderUpdated(null);
 
     if (sorter.columnKey === "createdDate") {
       setSortOrderCreate(sorter.order);
-    } else {
+    } else if (sorter.columnKey === "Update") {
       setSortOrderUpdated(sorter.order);
     }
   };
@@ -51,10 +52,16 @@ const SupplierBody = () => {
   };
   const handleReset = (clearFilters) => {
     clearFilters();
-    setSearchText('');
+    setSearchText("");
   };
   const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
       <div
         style={{
           padding: 8,
@@ -65,11 +72,13 @@ const SupplierBody = () => {
           ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{
             marginBottom: 8,
-            display: 'block',
+            display: "block",
           }}
         />
         <Space>
@@ -108,31 +117,38 @@ const SupplierBody = () => {
     filterIcon: (filtered) => (
       <SearchOutlined
         style={{
-          color: filtered ? '#1677ff' : undefined,
+          color: filtered ? "#1677ff" : undefined,
         }}
       />
     ),
     onFilter: (value, record) => {
-        if (!record || record[dataIndex] === undefined || record[dataIndex] === null) {
-            return false; // Or handle as appropriate
-        }
-        try{
-            return record[dataIndex].toString().toLowerCase().includes(value.toLowerCase());
-        } catch (e){
-            console.error("Error filtering record", e, record, dataIndex);
-            return false;
-        }
+      if (
+        !record ||
+        record[dataIndex] === undefined ||
+        record[dataIndex] === null
+      ) {
+        return false; // Or handle as appropriate
+      }
+      try {
+        return record[dataIndex]
+          .toString()
+          .toLowerCase()
+          .includes(value.toLowerCase());
+      } catch (e) {
+        console.error("Error filtering record", e, record, dataIndex);
+        return false;
+      }
     },
     render: (text) =>
       searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{
-            backgroundColor: '#ffc069',
+            backgroundColor: "#ffc069",
             padding: 0,
           }}
           searchWords={[searchText]}
           autoEscape
-          textToHighlight={text ? text.toString() : ''}
+          textToHighlight={text ? text.toString() : ""}
         />
       ) : (
         text
@@ -338,14 +354,14 @@ const SupplierBody = () => {
         if (isFacthing.current) return;
         isFacthing.current = true;
         const response = await dispatch(fetchAllSupplier());
-        if (response.payload.status === 'error') {
+        if (response.payload.status === "error") {
           isFacthing.current = false;
         }
       } catch (error) {
         return console.log(error);
       }
     };
-    
+
     if (suppliers.length === 0) FecthAll();
 
     if (suppliers.length !== 0) {
@@ -382,29 +398,37 @@ const SupplierBody = () => {
     )
   );
 
-
-    return (
-      <div>
-        <div className="w-full flex justify-center">
-          <div className="mb-[100px] w-[530px]">
-            <SearchInputComponent value={searchAll} onChange={setSearchAll} placeholder="Search" />
-          </div>
+  return (
+    <div>
+      <div className="w-full flex justify-center">
+        <div className="mb-[100px] w-[530px]">
+          <SearchInputComponent
+            value={searchAll}
+            onChange={setSearchAll}
+            placeholder="Search"
+          />
         </div>
-        <NormalCard>
-          <div className="text-xl py-5 px-4 font-primaryMedium bg-white">All Suppliers</div>
-          <div className="w-full">
-              {
-                isLoading ?
-                <div className='flex justify-center items-center h-[250px]'>
-                  <DotLoader />
-                </div>
-                :
-                <Table onChange={handleTableChange} columns={columns} dataSource={data && filteredData} />
-              }
-          </div>
-        </NormalCard>
       </div>
-    );
+      <NormalCard>
+        <div className="text-xl py-5 px-4 font-primaryMedium bg-white">
+          All Suppliers
+        </div>
+        <div className="w-full">
+          {isLoading ? (
+            <div className="flex justify-center items-center h-[250px]">
+              <DotLoader />
+            </div>
+          ) : (
+            <Table
+              onChange={handleTableChange}
+              columns={columns}
+              dataSource={data && filteredData}
+            />
+          )}
+        </div>
+      </NormalCard>
+    </div>
+  );
 };
 
 export default SupplierBody;
