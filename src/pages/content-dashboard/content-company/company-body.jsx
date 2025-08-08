@@ -357,9 +357,9 @@ const CompanyBody = () => {
           index: key + 1,
           NameTH: company?.CompanyNameTH,
           NameEN: company?.CompanyNameEN,
-          BUNameEN: company?.BusinessUnits?.map(
-            (bu) => `${bu.BusinessUnit.Name}, `
-          ),
+          BUNameEN: company?.BusinessUnits?.map((bu) => bu?.BusinessUnit?.Name)
+            .filter(Boolean)
+            .join(", "),
           tags: company?.Active ? "Active" : "Inactive",
           CreateBy: company?.CreateBy,
           CreateDate:
