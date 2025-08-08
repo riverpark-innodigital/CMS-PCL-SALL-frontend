@@ -84,18 +84,20 @@ const GroupTable = () => {
     }, 5000);
   }, [dispatch, groups]);
 
- const handleTableChange = (pagination, filters, sorter) => {
-   setPaginationInfo({
-     current: pagination.current,
-     pageSize: pagination.pageSize,
-   });
+  const handleTableChange = (pagination, filters, sorter) => {
+    setPaginationInfo({
+      current: pagination.current,
+      pageSize: pagination.pageSize,
+    });
+    setSortOrderCreate(null);
+    setSortOrderUpdated(null);
 
-   if (sorter.columnKey === "createdDate") {
-     setSortOrderCreate(sorter.order);
-   } else {
-     setSortOrderUpdated(sorter.order);
-   }
- };
+    if (sorter.columnKey === "createDate") {
+      setSortOrderCreate(sorter.order);
+    } else if (sorter.columnKey === "LastUpdated") {
+      setSortOrderUpdated(sorter.order);
+    }
+  };
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -338,6 +340,8 @@ const GroupTable = () => {
   );
 
   console.log("filteredData ->", filteredData);
+  console.log("sortOrderCreate ->", sortOrderCreate);
+  console.log("sortOrderUpdated ->", sortOrderUpdated);
 
   return (
     <div>
