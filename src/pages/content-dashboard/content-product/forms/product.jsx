@@ -661,7 +661,7 @@ const ProductForm = () => {
 
   const handleChangeSup = async (e) => {
     setSupplier(e);
-
+    setValidselectSup("");
     //    const companys = await dispatch(GettingCompanyBySup(e));
     //    console.log(companys.payload.data);
     //    const comFilter = await companys.payload.data.filter((com) => com.Company.Active === true);
