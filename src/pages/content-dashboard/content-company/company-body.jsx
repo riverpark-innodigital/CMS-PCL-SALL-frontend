@@ -210,7 +210,7 @@ const CompanyBody = () => {
       dataIndex: "BUNameEN",
       ...getColumnSearchProps("BUNameEN"),
       render: (_, { BUNameEN }) => (
-        <div className="max-w-[100px] text-nowrap text-ellipsis">
+        <div className="w-[200px] truncate" title={BUNameEN}>
           {BUNameEN}
         </div>
       ),
