@@ -163,7 +163,7 @@ const CompanyBody = () => {
       dataIndex: "key",
       key: "key",
       width: "1%",
-      ...getColumnSearchProps("key"),
+      // ...getColumnSearchProps("key"),
       render: (_text, _record, rowIndex) => (
         <div>
           {(paginationInfo.current - 1) * paginationInfo.pageSize +
