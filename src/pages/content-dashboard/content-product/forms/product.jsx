@@ -150,6 +150,17 @@ const ProductForm = () => {
       return Upload.LIST_IGNORE; // Prevents upload
     }
 
+    const isImageDuplicate = imageChildren.some(
+      (img) =>
+        img.file?.name === file.name &&
+        img.file?.size === file.size
+    );
+
+    if (allowedExtensionsNormal.includes(extension) && isImageDuplicate) {
+      message.error(`${file.name} is already added.`);
+      return Upload.LIST_IGNORE;
+    }
+
     if (file.size > maxSizeInBytes) {
       setFileOverSize(true);
       return Upload.LIST_IGNORE;
@@ -165,6 +176,17 @@ const ProductForm = () => {
       message.error(`${file.name} has an unsupported file extension.`);
       setFileOverSize(true);
       return Upload.LIST_IGNORE; // Prevents upload
+    }
+
+    const isPresentFileDuplicate = fileChildren.some(
+      (present) =>
+        present.file?.name === file.name &&
+        present.file?.size === file.size
+    );
+
+    if (allowedExtensionsFile.includes(extension) && isPresentFileDuplicate) {
+      message.error(`${file.name} is already added.`);
+      return Upload.LIST_IGNORE;
     }
 
     if (file.size > maxSizeInBytes) {
@@ -280,11 +302,18 @@ const ProductForm = () => {
   };
 
   const handleFileChidren = ({ file }) => {
-    const isDuplicate = imageChildren.some(
-      (image) => image.file.uid === file.uid
-    );
+    const isDuplicate = imageChildren.some((image) => {
+      const imageUid = image.file?.name; 
+      if (imageUid && file.name) {
+        return imageUid === file.name;
+      }
+      return (
+        image.file?.name === file.name &&
+        image.file?.size === file.size
+      );
+    });
 
-    if (!isDuplicate) {
+    if (!isDuplicate && file.status !== 'removed') {
       setImageChildren([
         ...imageChildren,
         {
@@ -292,20 +321,41 @@ const ProductForm = () => {
         },
       ]);
     }
+
+    if (file.status === 'removed') {
+
+      setImageChildren((prev) =>
+        prev.filter((image) => image.file.uid !== file.uid)
+      );
+    }
   };
 
   const handlePresentFile = ({ file }) => {
-    const isDuplicate = fileChildren.some(
-      (image) => image.file.uid === file.uid
-    );
+    const isDuplicate = fileChildren.some((present) => {
+      const presentUid = present.file?.name; 
+      if (presentUid && file.name) {
+        return presentUid === file.name;
+      }
+      return (
+        present.file?.name === file.name &&
+        present.file?.size === file.size
+      );
+    });
 
-    if (!isDuplicate) {
+    if (!isDuplicate && file.status !== 'removed') {
       setfileChildren([
         ...fileChildren,
         {
           file: file.originFileObj,
         },
       ]);
+    }
+
+    if (file.status === 'removed') {
+
+      setfileChildren((prev) =>
+        prev.filter((present) => present.file.uid !== file.uid)
+      );
     }
   };
 
@@ -593,7 +643,7 @@ const ProductForm = () => {
     console.log(e);
     setGroup(e);
 
-    setSupplier(null);
+    setSupplier("");
     setValidselectSup("");
 
     const sups = await dispatch(GettingSupByGroup(e));
@@ -873,6 +923,7 @@ const ProductForm = () => {
                   beforeUpload={beforeUpload}
                   defaultFileList={defaultImageMain}
                   onRemove={() => setImageMainRemove(true)}
+                  className="custom-upload-dragger"
                 >
                   <p className="ant-upload-drag-icon">
                     <div className="flex w-full justify-center">
@@ -908,6 +959,7 @@ const ProductForm = () => {
                   onRemove={(file) => {
                     setImageChildrenRemove((prev) => [...prev, file.name]);
                   }}
+                  className="custom-upload-dragger"
                 >
                   <p className="ant-upload-drag-icon">
                     <div className="flex w-full justify-center">
@@ -969,6 +1021,7 @@ const ProductForm = () => {
                 onRemove={(file) => {
                     setPresentFileRemove((prev) => [...prev, file.name]);
                 }}
+                className="custom-upload-dragger"
               >
                 <p className="ant-upload-drag-icon">
                   <div className="flex w-full justify-center">
@@ -1023,6 +1076,7 @@ const ProductForm = () => {
                   beforeUpload={beforeUploadVedio}
                   defaultFileList={defaultMedia}
                   onRemove={() => setMediaRemove(true)}
+                  className="custom-upload-dragger"
                 >
                   <p className="ant-upload-drag-icon">
                     <div className="flex w-full justify-center">

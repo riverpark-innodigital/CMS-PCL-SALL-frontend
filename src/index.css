@@ -93,3 +93,17 @@ body {
 .ant-table-column-sorter {
   display: none !important;
 }
+
+.ant-upload-list-item-error {
+  border-color: #ababab !important;
+}
+
+.ant-upload-list-item-error .ant-upload-list-item-name,
+.ant-upload-list-item-error .ant-upload-list-item-error-message {
+  color: black !important;
+}
+
+.ant-upload-list-item-error .ant-upload-list-item-action-icon svg,
+.ant-upload-list-item-error .anticon-delete {
+  color: #727070 !important;
+}
