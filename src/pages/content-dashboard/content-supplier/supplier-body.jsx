@@ -54,7 +54,7 @@ const SupplierBody = () => {
     clearFilters();
     setSearchText("");
   };
-  const getColumnSearchProps = (dataIndex) => ({
+  const getColumnSearchProps = (dataIndex, label) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -70,7 +70,7 @@ const SupplierBody = () => {
       >
         <Input
           ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
+          placeholder={`Search ${label || dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
@@ -189,7 +189,7 @@ const SupplierBody = () => {
       title: "Supplier Name",
       dataIndex: "SupplierName",
       key: "SupplierName",
-      ...getColumnSearchProps("SupplierNameEN"),
+      ...getColumnSearchProps("SupplierNameEN", "Supplier Name"),
       width: "25%",
       render: (_, { SupplierNameEN, image }) => (
         <div className="flex gap-x-3 items-center">
@@ -222,7 +222,7 @@ const SupplierBody = () => {
       dataIndex: "Company",
       key: "Company",
       // ellipsis: true,
-      ...getColumnSearchProps("Company"),
+      ...getColumnSearchProps("Company", "Company & Business unit"),
       render: (_, { Company }) => (
         <div className="max-w-[200px] truncate" title={Company}>
           {Array.isArray(Company) ? Company.join(", ") : Company}
