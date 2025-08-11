@@ -431,7 +431,7 @@ const GroupForm = ({ groupId }) => {
     const maxSizeInBytes = 5 * 1024 * 1024;
 
     if (!allowedExtensionsNormal.includes(extension)) {
-      message.error(`${file.name} has an unsupported file extension.`);
+      setFileOverSize(true);
       return Upload.LIST_IGNORE; // Prevents upload
     }
 
