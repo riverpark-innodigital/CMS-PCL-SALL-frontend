@@ -111,13 +111,13 @@ const SupplierCanvas = ({ supId }) => {
                             <span className="text-gray-800 font-primaryMedium text-[16px]">Supplier Name</span>
                             <span className="block">{supplier?.SupplierNameEn}</span>
                           </div>
-                          <div className="invisible">
-                            <span className="text-gray-800 font-primaryMedium text-[16px]">Company & BU</span>
+                          <div>
+                            <span className="text-gray-800 font-primaryMedium text-[16px]">Company</span>
                             <div className="flex max-w-[380px] overflow-x-auto no-scrollbar mt-1 gap-2">
                               {
                                 supplier?.SupplierCompany?.map((items, key) => (
                                   <div key={key}>
-                                    <span className="block text-nowrap py-[5px] text-center border border-gray-300 px-[5px] rounded">{items?.Company?.CompanyNameEN}</span>
+                                    <span className="block text-nowrap py-[5px] text-center border border-gray-300 px-[5px] rounded">{items?.Company?.CompanyNameEN || "-"}</span>
                                   </div>
                                 ))
                               }

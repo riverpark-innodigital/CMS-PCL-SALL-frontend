@@ -48,7 +48,7 @@ export const CreateSupplier = () => {
   const [descriptionENG, setDescriptionENG] = useState('');
   const [company, setCompany] = useState(null);
   const [files, setFile] = useState(null);
-  const [color, setColor] = useState('#1677ff');
+  const [color, setColor] = useState('#ffff');
   const [loading, setLoading] = useState(false);
   const [companyOptions, setCompanyOptions] = useState([]);
   const isFacthing = useRef(false);

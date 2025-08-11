@@ -60,7 +60,9 @@ const ProductInformation = ({ data }) => {
                   Company & BU
                 </span>
                 <span className="flex justify-start">
-                  {data?.CompanyName}, {data?.BUName}
+                  {data?.CompanyName && data?.BUName
+                    ? `${data.CompanyName}, ${data.BUName}`
+                    : "-"}
                 </span>
               </div>
               <div className="my-2">

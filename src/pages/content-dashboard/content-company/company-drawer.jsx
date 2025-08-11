@@ -111,17 +111,18 @@ const CompanyDrawer = ({ comId }) => {
                       Company Name
                     </span>
                     <span className="block">
-                      {currentCompany?.CompanyNameEN}
+                      {currentCompany?.CompanyNameEN} 
                     </span>
                   </div>
                   <div>
                     <span className="font-primaryMedium text-gray-800 text-[16px]">
-                      Bussiness Unit
+                      Business Unit
                     </span>
                     <span className="block">
-                      {currentCompany?.BusinessUnits?.map(
+                      {currentCompany?.BusinessUnits && currentCompany.BusinessUnits.length > 0 ?
+                      currentCompany?.BusinessUnits?.map(
                         (data) => `${data.BusinessUnit.Name}, `
-                      )}
+                      ) : '-'}
                     </span>
                   </div>
                   <div>

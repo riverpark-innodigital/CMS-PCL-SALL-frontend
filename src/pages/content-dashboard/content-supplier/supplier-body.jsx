@@ -22,9 +22,13 @@ const SupplierBody = () => {
   const [searchText, setSearchText] = useState("");
   const [searchAll, setSearchAll] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
-  const [sortOrderSuppName, setSortOrderSuppName] = useState(null);
-  const [sortOrderCreate, setSortOrderCreate] = useState(null);
-  const [sortOrderUpdated, setSortOrderUpdated] = useState(null);
+  const [sortOrders, setSortOrders] = useState({
+    SupplierName: null,
+    Company: null,
+    CreateDate: null,
+    Updated: null,
+    CreateBy: null,
+  });
   const searchInput = useRef(null);
   const [paginationInfo, setPaginationInfo] = useState({
     current: 1,
@@ -36,16 +40,25 @@ const SupplierBody = () => {
       current: pagination.current,
       pageSize: pagination.pageSize,
     });
-    setSortOrderCreate(null);
-    setSortOrderUpdated(null);
-    setSortOrderSuppName(null);
-
-    if (sorter.columnKey === "CreateDate") {
-      setSortOrderCreate(sorter.order);
-    } else if (sorter.columnKey === "Updated") {
-      setSortOrderUpdated(sorter.order);
-    } else if (sorter.columnKey === "SupplierName") {
-      setSortOrderSuppName(sorter.order);
+    if (Array.isArray(sorter)) {
+      const firstSorter = sorter[0] || {};
+      setSortOrders({
+        SupplierName: null,
+        Company: null,
+        CreateDate: null,
+        Updated: null,
+        CreateBy: null,
+        [firstSorter.columnKey]: firstSorter.order || null,
+      });
+    } else {
+      setSortOrders({
+        SupplierName: null,
+        Company: null,
+        CreateDate: null,
+        Updated: null,
+        CreateBy: null,
+        [sorter.columnKey]: sorter.order || null,
+      });
     }
   };
 
@@ -193,10 +206,10 @@ const SupplierBody = () => {
       title: (
         <div className="flex items-center">
           Supplier Name
-          {sortOrderSuppName === "ascend" && (
+          {sortOrders.SupplierName === "ascend" && (
             <AiOutlineArrowDown className="ml-2" />
           )}
-          {sortOrderSuppName === "descend" && (
+          {sortOrders.SupplierName === "descend" && (
             <AiOutlineArrowUp className="ml-2" />
           )}
         </div>
@@ -206,7 +219,7 @@ const SupplierBody = () => {
       ...getColumnSearchProps("SupplierNameEN", "Supplier Name"),
       width: "25%",
       sorter: (a, b) => a.SupplierNameEN.localeCompare(b.SupplierNameEN),
-      sortOrder: sortOrderSuppName,
+      sortOrder: sortOrders.SupplierName,
       render: (_, { SupplierNameEN, image }) => (
         <div className="flex gap-x-3 items-center">
           {!image ? (
@@ -234,11 +247,23 @@ const SupplierBody = () => {
       ),
     },
     {
-      title: "Company & Business unit",
+      title: (
+        <div className="flex items-center">
+          Company
+          {sortOrders.Company === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.Company === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "Company",
       key: "Company",
       // ellipsis: true,
-      ...getColumnSearchProps("Company", "Company & Business unit"),
+      ...getColumnSearchProps("Company", "Company"),
+      sorter: (a, b) => a.Company.localeCompare(b.Company),
+      sortOrder: sortOrders.Company,
       render: (_, { Company }) => (
         <div className="max-w-[200px] truncate" title={Company}>
           {Array.isArray(Company) ? Company.join(", ") : Company}
@@ -296,10 +321,10 @@ const SupplierBody = () => {
       title: (
         <div className="flex justify-center items-center">
           Created Date
-          {sortOrderCreate === "ascend" && (
+          {sortOrders.CreateDate === "ascend" && (
             <AiOutlineArrowDown className="ml-2" />
           )}
-          {sortOrderCreate === "descend" && (
+          {sortOrders.CreateDate === "descend" && (
             <AiOutlineArrowUp className="ml-2" />
           )}
         </div>
@@ -309,7 +334,7 @@ const SupplierBody = () => {
       align: "center",
       sorter: (a, b) => new Date(a.CreateDate) - new Date(b.CreateDate),
       sortDirections: ["ascend", "descend"],
-      sortOrder: sortOrderCreate,
+      sortOrder: sortOrders.CreateDate,
       render: (_, { CreateDate }) => {
         if (!CreateDate) return <span className="text-gray-500">No Date</span>;
         const [datefformat] = new Date(CreateDate).toISOString().split("T");
@@ -324,10 +349,10 @@ const SupplierBody = () => {
       title: (
         <div className="flex justify-center items-center">
           Last Updated
-          {sortOrderUpdated === "ascend" && (
+          {sortOrders.Updated === "ascend" && (
             <AiOutlineArrowDown className="ml-2" />
           )}
-          {sortOrderUpdated === "descend" && (
+          {sortOrders.Updated === "descend" && (
             <AiOutlineArrowUp className="ml-2" />
           )}
         </div>
@@ -337,7 +362,7 @@ const SupplierBody = () => {
       align: "center",
       sorter: (a, b) => new Date(a.UpdateDate) - new Date(b.UpdateDate),
       sortDirections: ["ascend", "descend"],
-      sortOrder: sortOrderUpdated,
+      sortOrder: sortOrders.Updated,
       render: (_, { UpdateDate }) => {
         if (!UpdateDate) return <span className="text-gray-500">No Date</span>;
         const [datefformat] = new Date(UpdateDate).toISOString().split("T");
@@ -349,10 +374,23 @@ const SupplierBody = () => {
       },
     },
     {
-      title: "Created By",
+      title: (
+        <div className="flex items-center">
+          Created By
+          {sortOrders.CreateBy === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.CreateBy === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "CreateBy",
       key: "CreateBy",
       ...getColumnSearchProps("CreateBy"),
+      sorter: (a, b) => a.CreateBy.localeCompare(b.CreateBy),
+      sortDirections: ["ascend", "descend"],
+      sortOrder: sortOrders.CreateBy,
       render: (text) => <p>{text}</p>,
     },
     {

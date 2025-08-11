@@ -355,11 +355,11 @@ const CompanyBody = () => {
       },
     },
     {
-      title: "Created By.",
+      title: "Created By",
       dataIndex: "CreateBy",
       key: "CreateBy",
       ...getColumnSearchProps("CreateBy"),
-      render: (_, { CreateBy }) => <a>{CreateBy}</a>,
+      render: (_, { CreateBy }) => <p>{CreateBy}</p>,
     },
     {
       title: "Action",
