@@ -22,6 +22,7 @@ const SupplierBody = () => {
   const [searchText, setSearchText] = useState("");
   const [searchAll, setSearchAll] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
+  const [sortOrderSuppName, setSortOrderSuppName] = useState(null);
   const [sortOrderCreate, setSortOrderCreate] = useState(null);
   const [sortOrderUpdated, setSortOrderUpdated] = useState(null);
   const searchInput = useRef(null);
@@ -37,11 +38,14 @@ const SupplierBody = () => {
     });
     setSortOrderCreate(null);
     setSortOrderUpdated(null);
+    setSortOrderSuppName(null);
 
-    if (sorter.columnKey === "createdDate") {
+    if (sorter.columnKey === "CreateDate") {
       setSortOrderCreate(sorter.order);
-    } else if (sorter.columnKey === "Update") {
+    } else if (sorter.columnKey === "Updated") {
       setSortOrderUpdated(sorter.order);
+    } else if (sorter.columnKey === "SupplierName") {
+      setSortOrderSuppName(sorter.order);
     }
   };
 
@@ -186,11 +190,23 @@ const SupplierBody = () => {
       },
     },
     {
-      title: "Supplier Name",
+      title: (
+        <div className="flex items-center">
+          Supplier Name
+          {sortOrderSuppName === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrderSuppName === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "SupplierName",
       key: "SupplierName",
       ...getColumnSearchProps("SupplierNameEN", "Supplier Name"),
       width: "25%",
+      sorter: (a, b) => a.SupplierNameEN.localeCompare(b.SupplierNameEN),
+      sortOrder: sortOrderSuppName,
       render: (_, { SupplierNameEN, image }) => (
         <div className="flex gap-x-3 items-center">
           {!image ? (
@@ -293,6 +309,7 @@ const SupplierBody = () => {
       align: "center",
       sorter: (a, b) => new Date(a.CreateDate) - new Date(b.CreateDate),
       sortDirections: ["ascend", "descend"],
+      sortOrder: sortOrderCreate,
       render: (_, { CreateDate }) => {
         if (!CreateDate) return <span className="text-gray-500">No Date</span>;
         const [datefformat] = new Date(CreateDate).toISOString().split("T");
@@ -320,6 +337,7 @@ const SupplierBody = () => {
       align: "center",
       sorter: (a, b) => new Date(a.UpdateDate) - new Date(b.UpdateDate),
       sortDirections: ["ascend", "descend"],
+      sortOrder: sortOrderUpdated,
       render: (_, { UpdateDate }) => {
         if (!UpdateDate) return <span className="text-gray-500">No Date</span>;
         const [datefformat] = new Date(UpdateDate).toISOString().split("T");
@@ -331,11 +349,11 @@ const SupplierBody = () => {
       },
     },
     {
-      title: "Created By.",
+      title: "Created By",
       dataIndex: "CreateBy",
       key: "CreateBy",
       ...getColumnSearchProps("CreateBy"),
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>,
     },
     {
       title: "Action",

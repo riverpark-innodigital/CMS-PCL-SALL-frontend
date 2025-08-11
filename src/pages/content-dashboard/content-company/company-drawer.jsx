@@ -97,7 +97,7 @@ const CompanyDrawer = ({ comId }) => {
               }`}
             >
               <AccordionBody className="pt-0">
-                <div className="mt-4">
+                <div className="my-[20px]">
                   <span className="text-gray-800 text-[24px] font-primaryMedium">
                     Company Detail
                   </span>
@@ -105,43 +105,47 @@ const CompanyDrawer = ({ comId }) => {
                     Get detailed information about the product.
                   </span>
                 </div>
-                <div className="my-4">
-                  <span className="font-primaryMedium text-gray-800 text-[16px]">
-                    Company Name
-                  </span>
-                  <span className="block">{currentCompany?.CompanyNameEN}</span>
+                <div className="grid grid-cols-2 gap-[20px]">
+                  <div>
+                    <span className="font-primaryMedium text-gray-800 text-[16px]">
+                      Company Name
+                    </span>
+                    <span className="block">
+                      {currentCompany?.CompanyNameEN}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-primaryMedium text-gray-800 text-[16px]">
+                      Bussiness Unit
+                    </span>
+                    <span className="block">
+                      {currentCompany?.BusinessUnits?.map(
+                        (data) => `${data.BusinessUnit.Name}, `
+                      )}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-primaryMedium text-gray-800 text-[16px]">
+                      Create By
+                    </span>
+                    <span className="block">{currentCompany?.CreateBy}</span>
+                  </div>
+                  <div>
+                    <span className="font-primaryMedium text-gray-800 text-[16px]">
+                      Create Date
+                    </span>
+                    <span className="block">
+                      {!currentCompany?.CreateDate
+                        ? "-"
+                        : EnglishFormat(currentCompany?.CreateDate)}
+                    </span>
+                  </div>
                 </div>
-                <div className="my-4">
-                  <span className="font-primaryMedium text-gray-800 text-[16px]">
-                    Bussiness Unit
-                  </span>
-                  <span className="block">
-                    {currentCompany?.BusinessUnits?.map(
-                      (data) => `${data.BusinessUnit.Name}, `
-                    )}
-                  </span>
-                </div>
-                <div className="my-4">
-                  <span className="font-primaryMedium text-gray-800 text-[16px]">
-                    Create By
-                  </span>
-                  <span className="block">{currentCompany?.CreateBy}</span>
-                </div>
-                <div className="my-4">
-                  <span className="font-primaryMedium text-gray-800 text-[16px]">
-                    Create Date
-                  </span>
-                  <span className="block">
-                    {!currentCompany?.CreateDate
-                      ? "-"
-                      : EnglishFormat(currentCompany?.CreateDate)}
-                  </span>
-                </div>
-                <div className="my-2 text-gray-800 font-primaryMedium">
+                <div className="mt-[25px] text-gray-800 font-primaryMedium">
                   Company Description
                 </div>
                 <div className="w-full text-wrap px-2 py-2 bg-gray-100 rounded-md">
-                  {currentCompany?.DescriptionEN||"No data"}
+                  {currentCompany?.DescriptionEN || "No data"}
                 </div>
               </AccordionBody>
             </Accordion>

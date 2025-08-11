@@ -20,8 +20,12 @@ const CompanyBody = () => {
   const [searchText, setSearchText] = useState("");
   const [searchAll, setSearchAll] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
-  const [sortOrderCreate, setSortOrderCreate] = useState(null);
-  const [sortOrderUpdated, setSortOrderUpdated] = useState(null);
+  const [sortOrders, setSortOrders] = useState({
+    NameEN: null,
+    BUNameEN: null,
+    CreateDate: null,
+    UpdateDate: null,
+  });
   const searchInput = useRef(null);
   const isFatcing = useRef(false);
   const [data, setData] = useState([]);
@@ -36,10 +40,23 @@ const CompanyBody = () => {
       pageSize: pagination.pageSize,
     });
 
-    if (sorter.columnKey === "createdDate") {
-      setSortOrderCreate(sorter.order);
+    if (Array.isArray(sorter)) {
+      const firstSorter = sorter[0] || {};
+      setSortOrders({
+        NameEN: null,
+        BUNameEN: null,
+        CreateDate: null,
+        UpdateDate: null,
+        [firstSorter.columnKey]: firstSorter.order || null,
+      });
     } else {
-      setSortOrderUpdated(sorter.order);
+      setSortOrders({
+        NameEN: null,
+        BUNameEN: null,
+        CreateDate: null,
+        UpdateDate: null,
+        [sorter.columnKey]: sorter.order || null,
+      });
     }
   };
 
@@ -173,10 +190,21 @@ const CompanyBody = () => {
       ),
     },
     {
-      title: "Company Name",
+      title: (
+        <div className="flex items-center">
+          Company Name
+          {sortOrders.NameEN === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.NameEN === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "NameEN",
       key: "NameEN",
       ...getColumnSearchProps("NameEN"),
+      sorter: (a, b) => a.NameEN.localeCompare(b.NameEN),
       render: (_, { NameEN, image }) => (
         <div className="flex gap-x-3 items-center">
           {!image ? (
@@ -205,10 +233,21 @@ const CompanyBody = () => {
       ),
     },
     {
-      title: "Bussiness Unit",
+      title: (
+        <div className="flex items-center">
+          Business Unit
+          {sortOrders.BUNameEN === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.BUNameEN === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       key: "BUNameEN",
       dataIndex: "BUNameEN",
       ...getColumnSearchProps("BUNameEN"),
+      sorter: (a, b) => a.BUNameEN.localeCompare(b.BUNameEN),
       render: (_, { BUNameEN }) => (
         <div className="w-[200px] truncate" title={BUNameEN}>
           {BUNameEN}
@@ -266,10 +305,10 @@ const CompanyBody = () => {
       title: (
         <div className="flex justify-center items-center">
           Created Date
-          {sortOrderCreate === "ascend" && (
+          {sortOrders.CreateDate === "ascend" && (
             <AiOutlineArrowDown className="ml-2" />
           )}
-          {sortOrderCreate === "descend" && (
+          {sortOrders.CreateDate === "descend" && (
             <AiOutlineArrowUp className="ml-2" />
           )}
         </div>
@@ -293,10 +332,10 @@ const CompanyBody = () => {
       title: (
         <div className="flex justify-center items-center">
           Last Updated
-          {sortOrderUpdated === "ascend" && (
+          {sortOrders.UpdateDate === "ascend" && (
             <AiOutlineArrowDown className="ml-2" />
           )}
-          {sortOrderUpdated === "descend" && (
+          {sortOrders.UpdateDate === "descend" && (
             <AiOutlineArrowUp className="ml-2" />
           )}
         </div>

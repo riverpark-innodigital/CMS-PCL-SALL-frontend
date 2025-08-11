@@ -89,20 +89,23 @@ export const CreateSupplier = () => {
     };
 
     const handleFileChange = ({ file }) => {
-      setvalidfile(null);
-      if (files === null) {
-        setFile(file.originFileObj); 
-      }
+      const fileObj = file.originFileObj;
+      files === null && setFile(file.originFileObj);
       if (fileList.length === 0) {
-        setFileList([...fileList, {
-          uid: file.uid,
-          name: file.name,
-          status: 'done',
-          size: file.size,
-          type: file.type,
-          lastModifiedDate: file.lastModifiedDate,
-          lastModified: file.lastModified
-        }]);
+        const previewUrl = URL.createObjectURL(fileObj);
+        setFileList([
+          ...fileList,
+          {
+            uid: file.uid,
+            name: file.name,
+            status: "done",
+            size: file.size,
+            type: file.type,
+            lastModifiedDate: file.lastModifiedDate,
+            lastModified: file.lastModified,
+            url: previewUrl,
+          },
+        ]);
       }
     };
 
@@ -161,18 +164,20 @@ export const CreateSupplier = () => {
       }
     }
 
-    const resetForm = async () => {
+    const resetForm = () => {
       setOpenResponsive(false);
       setOpenConfirm(false);
       setSupplierNameENG("");
       setDescriptionENG("");
-      await setIsresetColor(true);
+      setValidNameEN("");
+      setIsresetColor(true);
       setCompany([]);
-      await setFile(null);
+      setFile(null);
       setLoading(false);
-      await setColor("#ffffff");
+      setColor("#ffffff");
       setFileList([]);
       setSuccessModal(true);
+      setvalidfile("");
     }
 
     const onChange = (checked) => {
@@ -206,8 +211,6 @@ export const CreateSupplier = () => {
   const handlerOpen = () => {
     setDescriptionENG('');
     setSupplierNameENG('');
-    setColor("#FFFFFF");
-    setIsresetColor(false);
     setOpenResponsive(true);
   }
 
@@ -287,7 +290,7 @@ export const CreateSupplier = () => {
           </div>
         </div>
         <div className="w-full grid grid-cols-1 gap-[25px] mt-[25px]">
-          <MultiSelect label="Company & Business unit" placeholder="Select Company & Business unit" defaultValue={company} options={companyOptions} onChange={(e) => setCompany(e)} validate={validCompany} />
+          <MultiSelect label="Company" placeholder="Select Company" defaultValue={company} options={companyOptions} onChange={(e) => setCompany(e)} validate={validCompany} />
         </div>
         <div className="w-full grid grid-col-1 gap-[25px] pt-[25px]">
           <div className="w-full">
@@ -295,7 +298,10 @@ export const CreateSupplier = () => {
           </div>
         </div>
         <div className="mt-5">
-          <span className="text-gray-800 font-primaryMedium">Upload the supplier image</span>
+          <span className="text-gray-800 font-primaryMedium">
+            Upload the supplier image 
+            <span className="text-red-500">*</span>
+            </span>
         </div>
         <div className="w-full mt-1">
           <Dragger 
@@ -339,6 +345,7 @@ export const UpdateSupplier = ({ supId, data }) => {
   const [company, setCompany] = useState([]);
   const [active, setActive] = useState(data?.Active);
   const [files, setFile] = useState(null);
+  const [supplierImage, setSupplierImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [color, setColor] = useState(data?.ColorCode);
   const [companyOptions, setCompanyOptions] = useState([]);
@@ -396,7 +403,7 @@ export const UpdateSupplier = ({ supId, data }) => {
           return; 
         }
 
-        if ((files === null || files === undefined) && data?.SupplierImage === null) {
+        if ((files === null || files === undefined) && supplierImage === null) {
           console.log((files === null || files === undefined) && data?.SupplierImage === null);
           
           files === null || files === undefined ? setvalidfile('Please complete all the required information.') : setvalidfile('')
@@ -456,6 +463,8 @@ export const UpdateSupplier = ({ supId, data }) => {
     
     const handlerRemoveFile = async () => {
       await setFile(null);
+      setvalidfile('Please complete all the required information.');
+      setSupplierImage(null);
     }
 
     const onChange = (checked) => {
@@ -473,6 +482,12 @@ export const UpdateSupplier = ({ supId, data }) => {
         setCompanyOptions(companyData);
       }
     }, [companies]);
+
+    useEffect(() => {
+      if (data) {
+        setSupplierImage(data.SupplierImage);
+      }
+    }, [data]);
 
     const hannlderOpen = async () => {
       let ComArr = [];
@@ -556,7 +571,7 @@ export const UpdateSupplier = ({ supId, data }) => {
           </div>
         </div>
         <div className="w-full grid grid-cols-1 gap-[25px] mt-[25px]">
-          <MultiSelect label="Company & Business unit" placeholder="Select Company & Business unit" defaultValue={company} options={companyOptions} onChange={(e) => setCompany(e)} validate={validCompany} />
+          <MultiSelect label="Company" placeholder="Select Company" defaultValue={company} options={companyOptions} onChange={(e) => setCompany(e)} validate={validCompany} />
         </div>
         <div className="w-full grid grid-col-1 gap-[25px] pt-[25px]">
           <div className="w-full">

@@ -24,7 +24,6 @@ const UserContent = () => {
     Fullname: null,
     saleteam: null,
     role: null,
-    status: null,
     updatedAt: null,
     updatedBy: null,
   });
@@ -249,17 +248,7 @@ const UserContent = () => {
       render: (_, { role }) => <div>{role}</div>,
     },
     {
-      title: (
-        <div className="flex items-center">
-          Status
-          {sortOrders.status === "ascend" && (
-            <AiOutlineArrowDown className="ml-2" />
-          )}
-          {sortOrders.status === "descend" && (
-            <AiOutlineArrowUp className="ml-2" />
-          )}
-        </div>
-      ),
+      title: "Status",
       dataIndex: "status",
       key: "status",
       filters: [
@@ -274,7 +263,6 @@ const UserContent = () => {
       ],
       onFilter: (value, record) => record.status.includes(value), // ✅ Fix: Filter by status
       sorter: (a, b) => a.status.localeCompare(b.status), // ✅ Fix: Sort alphabetically
-      sortOrder: sortOrders.status,
       render: (_, { status }) => (
         <div
           style={{
@@ -382,7 +370,6 @@ const UserContent = () => {
         Fullname: null,
         saleteam: null,
         role: null,
-        status: null,
         updatedAt: null,
         updatedBy: null,
         [firstSorter.columnKey]: firstSorter.order || null,
@@ -392,7 +379,6 @@ const UserContent = () => {
         Fullname: null,
         saleteam: null,
         role: null,
-        status: null,
         updatedAt: null,
         updatedBy: null,
         [sorter.columnKey]: sorter.order || null,

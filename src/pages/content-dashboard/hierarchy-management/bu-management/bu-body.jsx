@@ -19,6 +19,7 @@ const CompanyBody = () => {
   const [searchText, setSearchText] = useState("");
   const [searchAll, setSearchAll] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
+  const [sortOrderName, setSortOrderName] = useState(null);
   const [sortOrderCreate, setSortOrderCreate] = useState(null);
   const [sortOrderUpdated, setSortOrderUpdated] = useState(null);
   const searchInput = useRef(null);
@@ -36,11 +37,14 @@ const CompanyBody = () => {
 
     setSortOrderCreate(null);
     setSortOrderUpdated(null);
+    setSortOrderName(null);
 
     if (sorter.columnKey === "CreateDate") {
       setSortOrderCreate(sorter.order);
     } else if (sorter.columnKey === "UpdateDate") {
       setSortOrderUpdated(sorter.order);
+    } else if (sorter.columnKey === "Name") {
+      setSortOrderName(sorter.order);
     }
   };
 
@@ -160,10 +164,22 @@ const CompanyBody = () => {
       ),
     },
     {
-      title: "Business Unit Name",
+      title: (
+        <div className="flex items-center">
+          Business Unit Name
+          {sortOrderName === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrderName === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "Name",
       key: "Name",
       ...getColumnSearchProps("Name"),
+      sorter: (a, b) => a.Name.localeCompare(b.Name),
+      sortOrder: sortOrderName,
       render: (_, { Name }) => (
         <div className="flex gap-x-3 items-center">
           <div>
@@ -274,11 +290,11 @@ const CompanyBody = () => {
       },
     },
     {
-      title: "Created By.",
+      title: "Created By",
       dataIndex: "CreateBy",
       key: "CreateBy",
       ...getColumnSearchProps("CreateBy"),
-      render: (_, { CreateBy }) => <a>{CreateBy}</a>,
+      render: (_, { CreateBy }) => <p>{CreateBy}</p>,
     },
     {
       title: "Action",

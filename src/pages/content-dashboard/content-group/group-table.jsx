@@ -19,6 +19,7 @@ const GroupTable = () => {
   const [tableData, setTableData] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
+  const [sortOrderName, setSortOrderName] = useState(null);
   const [sortOrderCreate, setSortOrderCreate] = useState(null);
   const [sortOrderUpdated, setSortOrderUpdated] = useState(null);
   const [searchAll, setSearchAll] = useState("");
@@ -91,11 +92,14 @@ const GroupTable = () => {
     });
     setSortOrderCreate(null);
     setSortOrderUpdated(null);
+    setSortOrderName(null)
 
     if (sorter.columnKey === "createDate") {
       setSortOrderCreate(sorter.order);
     } else if (sorter.columnKey === "LastUpdated") {
       setSortOrderUpdated(sorter.order);
+    } else if (sorter.columnKey === "groupNameEn") {
+      setSortOrderName(sorter.order);
     }
   };
 
@@ -206,10 +210,22 @@ const GroupTable = () => {
       ),
     },
     {
-      title: "Product Group Name",
-      dataIndex: "groupName",
-      key: "groupName",
-      ...getColumnSearchProps("groupNameEn"),
+      title: (
+        <div className="flex items-center">
+          Product Group Name
+          {sortOrderName === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrderName === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
+      dataIndex: "groupNameEn",
+      key: "groupNameEn",
+      ...getColumnSearchProps("Product Group Name"),
+      sorter: (a, b) => a.groupNameEn.localeCompare(b.groupNameEn),
+      sortOrder: sortOrderName,
       render: (_, { groupNameEn }) => (
         <div className="flex items-center gap-2">
           <Flex vertical>
@@ -278,6 +294,7 @@ const GroupTable = () => {
       key: "createDate",
       align: "center",
       sorter: (a, b) => new Date(a.createDate) - new Date(b.createDate),
+      sortOrder: sortOrderCreate,
       sortDirections: ["ascend", "descend"],
       render: (_, { createDate }) => {
         if (!createDate) return <span className="text-gray-500">No Date</span>;
@@ -305,6 +322,7 @@ const GroupTable = () => {
       align: "center",
       sorter: (a, b) => new Date(a.UpdateDate) - new Date(b.UpdateDate),
       sortDirections: ["ascend", "descend"],
+      sortOrder: sortOrderUpdated,
       render: (_, { UpdateDate }) => {
         if (!UpdateDate) return <span className="text-gray-500">No Date</span>;
         return (
@@ -338,10 +356,6 @@ const GroupTable = () => {
       String(value).toLowerCase().includes(searchAll.toLowerCase())
     )
   );
-
-  console.log("filteredData ->", filteredData);
-  console.log("sortOrderCreate ->", sortOrderCreate);
-  console.log("sortOrderUpdated ->", sortOrderUpdated);
 
   return (
     <div>

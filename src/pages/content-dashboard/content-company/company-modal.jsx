@@ -230,8 +230,6 @@ export const CreateCompany = () => {
     setValidNameEN("");
     setvalidfile("");
     setvalidCom("");
-    setFileList([]);
-    setCompanyFiles([]);
   };
 
   useEffect(() => {

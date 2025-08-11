@@ -124,11 +124,11 @@ const SupplierCanvas = ({ supId }) => {
                             </div>
                           </div>
                           <div className="w-full">
-                            <span className="text-gray-800 font-primaryMedium text-[16px]">Create By</span>
+                            <span className="text-gray-800 font-primaryMedium text-[16px]">Created By</span>
                             <span className="block">{supplier?.CreateBy}</span>
                           </div>
                           <div className="w-full">
-                            <span className="text-gray-800 font-primaryMedium text-[16px]">Create Date</span>
+                            <span className="text-gray-800 font-primaryMedium text-[16px]">Created Date</span>
                             <span className="block">{supplier?.CreateDate ? EnglishFormat(supplier?.CreateDate) : '-'}</span>
                           </div>
                         </div>

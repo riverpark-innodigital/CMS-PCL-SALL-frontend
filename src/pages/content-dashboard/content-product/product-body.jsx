@@ -21,6 +21,14 @@ const ProductTable = () => {
   const { allProducts } = useSelector((state) => state.productsale);
   const [sortOrderCreate, setSortOrderCreate] = useState(null);
   const [sortOrderUpdated, setSortOrderUpdated] = useState(null);
+  const [sortOrders, setSortOrders] = useState({
+    product: null,
+    productGroup: null,
+    supplier: null,
+    Campany: null,
+    createdDate: null,
+    updatedDate: null,
+  });
   const [tableData, setTableData] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [searchAll, setSearchAll] = useState("");
@@ -155,11 +163,23 @@ const ProductTable = () => {
       ),
     },
     {
-      title: "Product",
+      title: (
+        <div className="flex items-center">
+          Product
+          {sortOrders.product === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.product === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "product",
       key: "product",
       width: "20%",
       ...getColumnSearchProps("product"),
+      sorter: (a, b) => a.product.localeCompare(b.product),
+      sortOrder: sortOrders.product,
       render: (_, { imageMain, product, createdDate }) => (
         <div className="flex items-center gap-x-3">
           <div>
@@ -175,11 +195,23 @@ const ProductTable = () => {
       ),
     },
     {
-      title: "Product Group",
+      title: (
+        <div className="flex items-center">
+          Product Group
+          {sortOrders.productGroup === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.productGroup === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "productGroup",
       key: "productGroup",
       width: "10%",
       ...getColumnSearchProps("productGroup"),
+      sorter: (a, b) => a.productGroup.localeCompare(b.productGroup),
+      sortOrder: sortOrders.productGroup,
       render: (_, { productGroup, model }) => (
         <div>
           {productGroup}
@@ -188,11 +220,23 @@ const ProductTable = () => {
       ),
     },
     {
-      title: "Supplier",
+      title: (
+        <div className="flex items-center">
+          Supplier
+          {sortOrders.supplier === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.supplier === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "supplier",
       key: "supplier",
       width: "10%",
       ...getColumnSearchProps("supplier"),
+      sorter: (a, b) => a.supplier.localeCompare(b.supplier),
+      sortOrder: sortOrders.supplier,
       render: (_, { supplierImage, supplier }) => (
         <div className="flex items-center">
           <img
@@ -207,10 +251,22 @@ const ProductTable = () => {
       ),
     },
     {
-      title: "Campany & BU",
+      title: (
+        <div className="flex items-center">
+          Campany & BU
+          {sortOrders.Campany === "ascend" && (
+            <AiOutlineArrowDown className="ml-2" />
+          )}
+          {sortOrders.Campany === "descend" && (
+            <AiOutlineArrowUp className="ml-2" />
+          )}
+        </div>
+      ),
       dataIndex: "campany",
-      key: "campany",
+      key: "Campany",
       ...getColumnSearchProps("Campany"),
+      sorter: (a, b) => a.Campany.localeCompare(b.Campany),
+      sortOrder: sortOrders.Campany,
       width: "15%",
       render: (_, { Campany }) => <div>{Campany}</div>,
     },
@@ -218,10 +274,10 @@ const ProductTable = () => {
       title: (
         <div className="flex justify-center items-center">
           Created Date
-          {sortOrderCreate === "ascend" && (
+          {sortOrders.createdDate === "ascend" && (
             <AiOutlineArrowDown className="ml-2" />
           )}
-          {sortOrderCreate === "descend" && (
+          {sortOrders.createdDate === "descend" && (
             <AiOutlineArrowUp className="ml-2" />
           )}
         </div>
@@ -230,6 +286,7 @@ const ProductTable = () => {
       key: "createdDate",
       align: "center",
       sorter: (a, b) => new Date(a.createdDate) - new Date(b.createdDate),
+      sortOrder: sortOrders.createdDate,
       sortDirections: ["ascend", "descend"],
       render: (date) => {
         if (!date) return <span className="text-gray-500">No Date</span>;
@@ -245,10 +302,10 @@ const ProductTable = () => {
       title: (
         <div className="flex justify-center items-center">
           Last Updated
-          {sortOrderUpdated === "ascend" && (
+          {sortOrders.updatedDate === "ascend" && (
             <AiOutlineArrowDown className="ml-2" />
           )}
-          {sortOrderUpdated === "descend" && (
+          {sortOrders.updatedDate === "descend" && (
             <AiOutlineArrowUp className="ml-2" />
           )}
         </div>
@@ -257,6 +314,7 @@ const ProductTable = () => {
       key: "updatedDate",
       align: "center",
       sorter: (a, b) => new Date(a.updatedDate) - new Date(b.updatedDate),
+      sortOrder: sortOrders.updatedDate,
       sortDirections: ["ascend", "descend"],
       render: (_, { updatedDate }) => {
         if (!updatedDate) return <span className="text-gray-500">No Date</span>;
@@ -339,10 +397,27 @@ const ProductTable = () => {
       pageSize: pagination.pageSize,
     });
 
-    if (sorter.columnKey === "createdDate") {
-      setSortOrderCreate(sorter.order);
+    if (Array.isArray(sorter)) {
+      const firstSorter = sorter[0] || {};
+      setSortOrders({
+        product: null,
+        productGroup: null,
+        supplier: null,
+        campany: null,
+        createdDate: null,
+        updatedDate: null,
+        [firstSorter.columnKey]: firstSorter.order || null,
+      });
     } else {
-      setSortOrderUpdated(sorter.order);
+      setSortOrders({
+        product: null,
+        productGroup: null,
+        supplier: null,
+        campany: null,
+        createdDate: null,
+        updatedDate: null,
+        [sorter.columnKey]: sorter.order || null,
+      });
     }
   };
 

@@ -15,10 +15,13 @@ const DefaultColorPicker = ({ onChange, defaultColor, isResetColor }) => {
             onChange(bgColor);
         }
 
-        if (isResetColor === true) {
+    }, [bgColor, onChange]);
+
+    useEffect(() => {
+        if (isResetColor) {
             setColor('#ffffff');
         }
-    }, [bgColor, onChange, isResetColor]);
+    }, [isResetColor, defaultColor]);
 
     return (
         <>
