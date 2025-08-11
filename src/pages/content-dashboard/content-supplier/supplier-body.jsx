@@ -221,7 +221,7 @@ const SupplierBody = () => {
       title: "Company & Business unit",
       dataIndex: "Company",
       key: "Company",
-      ellipsis: true,
+      // ellipsis: true,
       ...getColumnSearchProps("Company"),
       render: (_, { Company }) => (
         <span className="font-primaryMedium">{Company}</span>
