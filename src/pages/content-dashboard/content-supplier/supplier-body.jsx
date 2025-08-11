@@ -224,7 +224,9 @@ const SupplierBody = () => {
       // ellipsis: true,
       ...getColumnSearchProps("Company"),
       render: (_, { Company }) => (
-        <span className="font-primaryMedium">{Company}</span>
+        <div className="max-w-[200px] truncate" title={Company}>
+          {Array.isArray(Company) ? Company.join(", ") : Company}
+        </div>
       ),
     },
     {
@@ -379,9 +381,11 @@ const SupplierBody = () => {
           UpdateDate: supplier?.UpdateDate,
           CreateDateText: dateFormat(supplier?.CreateDate, "mediumDate"),
           UpdateDateText: dateFormat(supplier?.UpdateDate, "mediumDate"),
-          Company: supplier?.SupplierCompany?.map((items) => {
-            return `${items?.Company?.CompanyNameEN}`;
-          }),
+          Company: supplier?.SupplierCompany?.map(
+            (sup) => sup?.Company?.CompanyNameEN
+          )
+            .filter(Boolean)
+            .join(", "),
         }))
       );
       setIsLoading(false);
