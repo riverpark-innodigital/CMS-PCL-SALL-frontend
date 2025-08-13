@@ -35,7 +35,7 @@ function error401Interceptor(instance) {
   instance.interceptors.response.use(
     (response) => response,
     (error) => {
-      if (error.response?.status === 401) {
+      if (window.location.pathname !== "/authenticate/signin" && error.response?.status === 401) {
         dialogHandler.showDialog(
           "Error 401 - Unauthorized",
           "Sorry, Your request could not be processed.",

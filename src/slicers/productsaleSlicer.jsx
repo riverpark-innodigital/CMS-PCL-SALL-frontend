@@ -177,6 +177,16 @@ export const deleteProductFolder = createAsyncThunk('productsale/deleteProductFo
     }
 })
 
+export const getPresentUserByProduct = createAsyncThunk('productsale/GetProductUser', async (productId) => {
+    try {
+        const response = await AxiosInstance.get(`/productsale/get_product_user/${productId.productId}`);
+
+        return { status: true, data: response.data.data };
+    } catch (error) {
+        return { status: false, error: error.response?.data?.error || error.message };
+    }
+});
+
 export const getProductById = createAsyncThunk('productsale/getProductById', async (productId) => {
     try {
         const response = await AxiosInstance.get(`/productsale/product/${productId.productId}`);

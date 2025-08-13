@@ -145,7 +145,6 @@ const ProductForm = () => {
     const extension = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
     const maxSizeInBytes = 5 * 1024 * 1024;
     if (!allowedExtensionsNormal.includes(extension)) {
-      message.error(`${file.name} has an unsupported file extension.`);
       setFileOverSize(true);
       return Upload.LIST_IGNORE; // Prevents upload
     }
@@ -173,7 +172,6 @@ const ProductForm = () => {
     const extension = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
     const maxSizeInBytes = 50 * 1024 * 1024;
     if (!allowedExtensionsFile.includes(extension)) {
-      message.error(`${file.name} has an unsupported file extension.`);
       setFileOverSize(true);
       return Upload.LIST_IGNORE; // Prevents upload
     }
@@ -201,7 +199,6 @@ const ProductForm = () => {
     const extension = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
     const maxSizeInBytes = 100 * 1024 * 1024;
     if (!allowedExtensionsVideo.includes(extension)) {
-      message.error(`${file.name} has an unsupported file extension.`);
       setFileOverSize(true);
       return Upload.LIST_IGNORE; // Prevents upload
     }

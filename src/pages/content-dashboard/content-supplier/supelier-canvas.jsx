@@ -111,13 +111,13 @@ const SupplierCanvas = ({ supId }) => {
                             <span className="text-gray-800 font-primaryMedium text-[16px]">Supplier Name</span>
                             <span className="block">{supplier?.SupplierNameEn}</span>
                           </div>
-                          <div>
+                          <div className="-mt-1">
                             <span className="text-gray-800 font-primaryMedium text-[16px]">Company</span>
-                            <div className="flex max-w-[380px] overflow-x-auto no-scrollbar mt-1 gap-2">
+                            <div className="flex max-w-[380px] overflow-x-auto no-scrollbar gap-2">
                               {
                                 supplier?.SupplierCompany?.map((items, key) => (
                                   <div key={key}>
-                                    <span className="block text-nowrap py-[5px] text-center border border-gray-300 px-[5px] rounded">{items?.Company?.CompanyNameEN || "-"}</span>
+                                    <span className="block text-nowrap text-center rounded">{items?.Company?.CompanyNameEN || "-"}</span>
                                   </div>
                                 ))
                               }
@@ -127,7 +127,7 @@ const SupplierCanvas = ({ supId }) => {
                             <span className="text-gray-800 font-primaryMedium text-[16px]">Created By</span>
                             <span className="block">{supplier?.CreateBy}</span>
                           </div>
-                          <div className="w-full">
+                          <div className="w-full -mt-1">
                             <span className="text-gray-800 font-primaryMedium text-[16px]">Created Date</span>
                             <span className="block">{supplier?.CreateDate ? EnglishFormat(supplier?.CreateDate) : '-'}</span>
                           </div>

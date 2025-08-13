@@ -384,7 +384,7 @@ export const UpdateSupplier = ({ supId, data }) => {
       const maxSizeInBytes = 5 * 1024 * 1024;
       const extension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
       if (!allowedExtensionsNormal.includes(extension)) {
-          message.error(`${file.name} has an unsupported file extension.`);
+          setFileOverSize(true);
           return Upload.LIST_IGNORE; // Prevents upload
       }
 

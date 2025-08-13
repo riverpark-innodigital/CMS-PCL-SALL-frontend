@@ -8,7 +8,7 @@ import { Image, Tag, notification, Empty, Drawer } from 'antd';
 import DetailLoading from "../../../components/content-loading/detail-loading";
 import { IconButton } from "@material-tailwind/react";
 // import SupplierModal from "./supelier-modal";
-import { getProductById } from "../../../slicers/productsaleSlicer";
+import { getProductById, getPresentUserByProduct } from "../../../slicers/productsaleSlicer";
 import { getFolderById } from "../../../slicers/productfileSlicer";
 import { FiEdit3 } from "react-icons/fi";
 import ProductInformation from "./content-details/prodiuct-information";
@@ -16,6 +16,7 @@ import SingleLaoding from "../../../components/content-loading/single-loading";
 import ProductFolderDetial from "./content-details/product-folder";
 import ReactPlayer from 'react-player'
 import PresentationDetail from "./content-details/presentation";
+import ProductPresentTable from "./product-present-body";
 
 const ProductCanvas = ({ proId }) => {
 
@@ -29,6 +30,7 @@ const ProductCanvas = ({ proId }) => {
   const [supData, setSupData] = useState();
   const [foldersData, setFoldersData] = useState([]);
   const [presentData, setPresentData] = useState([]);
+  const [presentUserData, setPresentUserData] = useState([]);
   const Facthing = useRef(false);
 
   const notFoundTag = <Tag bordered={false} color="#bfbfbf"> Not Found </Tag>
@@ -41,13 +43,15 @@ const ProductCanvas = ({ proId }) => {
       if (Facthing.current) return;
       Facthing.current = true;
       const response = await dispatch(getProductById({ productId: proId }));
+      const responsePresent = await dispatch(getPresentUserByProduct({ productId: proId }));
       const resfolders = await dispatch(getFolderById({ productId: proId }));
 
       if (response.payload.status === true) {
         Facthing.current = false;
         const data = response.payload.data;
         const folders = resfolders.payload.data;
-        const present = response.payload.data.PresentFile;       
+        const present = response.payload.data.PresentFile;      
+        const presentUser = responsePresent.payload.data; 
 
         if (folders !== undefined && folders.length > 0) {
           setFolders(
@@ -80,6 +84,7 @@ const ProductCanvas = ({ proId }) => {
           }]);
         }
     
+        setPresentUserData(presentUser);
         setImage(data.ProductImageChildren);
         setSupData(data);
         setMedia(data);
@@ -239,6 +244,10 @@ const ProductCanvas = ({ proId }) => {
             { isLoading ? <SingleLaoding otherStyle="w-[100px] h-[20px]" /> : <span className="text-gray-600">{supData?.MeadiaDescription}</span> }
           </div>
         </div>
+
+        {/* */}
+        <ProductPresentTable data={presentUserData}/>
+
         <div className="mt-5 flex justify-start">
           <span className="text-[18px] font-primaryMedium">Product Files</span>
         </div>
