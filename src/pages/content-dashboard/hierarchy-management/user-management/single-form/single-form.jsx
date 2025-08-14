@@ -36,7 +36,9 @@ const SingleForm = () => {
     // const isFacingHandlers = useRef(false);
     const isFacingUserDirectory = useRef(false);
     const [image, setImage] = useState(null);
+    const [pictureProfile, setPictureProfile] = useState(null);
     const [selectedGroups, setSelectedGroups] = useState([]);
+    const [RemoveImage, setRemoveImage] = useState(false);
     // const [selectedPermisson, setSelectedPermission] = useState();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -97,6 +99,8 @@ const SingleForm = () => {
 
         if (file) {
           setImage(URL.createObjectURL(file));
+          setPictureProfile(file);
+          setRemoveImage(false);
         }
       },
     });
@@ -107,6 +111,8 @@ const SingleForm = () => {
 
     const removeImage = () => {
         setImage(null);
+        setPictureProfile(null);
+        setRemoveImage(true);
     }
 
     const hadlerAddnewUser = async () => {
@@ -137,6 +143,7 @@ const SingleForm = () => {
                 email: Email,
                 role: role,
                 status: status,
+                ProfilePicture: pictureProfile,
             };
 
             const dataUpdate = {
@@ -147,6 +154,8 @@ const SingleForm = () => {
                 email: Email,
                 role: role,
                 status: status,
+                ProfilePicture: pictureProfile,
+                isRemovePicture: RemoveImage
             }
 
             console.log(dataUpdate);
@@ -305,6 +314,9 @@ const SingleForm = () => {
                     setEmail(data.payload.data.email || "");
                     setRole(data.payload.data.role);
                     setStatus(data.payload.data.active);
+                    setImage(data.payload.data.picture
+                        ? `${import.meta.env.VITE_REDIRECT_IMG}/images/${data.payload.data.picture}`
+                        : '');
                     // setHandlerBy(data.payload.data.handleId);
                     // setSelectedGroups(data.payload.data.groupPermissions.map((item) => ({
                     //     value: item.groupUserPermissionNameEN,

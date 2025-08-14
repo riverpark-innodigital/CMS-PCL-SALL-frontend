@@ -43,14 +43,22 @@ export const GettingAllRoles = createAsyncThunk('usermanage/GettingAllRoles', as
 
 export const AddnewSingleLdapUser = createAsyncThunk('usermanage/AddnewSingleLdapUser', async (data) => {
     try {
-        const response = await AxiosInstance.post('/usermanagement/single_user', {
-            ldapUsername: data.ldapUsername,
-            ldapName: data.ldapName,
-            email: data.email,
-            role: data.role,
-            handleId: data.handleId,
-            status: data.status,
-        });
+        const formData = new FormData();
+        formData.append("ldapUsername", data.ldapUsername);
+        formData.append("ldapName", data.ldapName);
+        formData.append("email", data.email);
+        formData.append("role", data.role);
+        formData.append("handleId", data.handleId);
+        formData.append("status", data.status);
+        formData.append("ProfilePicture", data.ProfilePicture);
+
+        const response = await AxiosInstance.post('/usermanagement/single_user', formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
 
         return { status: true, data: response.data.body };
     } catch (e) {
@@ -60,14 +68,23 @@ export const AddnewSingleLdapUser = createAsyncThunk('usermanage/AddnewSingleLda
 
 export const UpdateUser = createAsyncThunk('usermanage/UpdateUser', async (data) => {
     try {
-        const response = await AxiosInstance.put(`/usermanagement/users/${data.id}`, {
-            ldapUsername: data.ldapUsername,
-            ldapName: data.ldapName,
-            email: data.email,
-            role: data.role,
-            handleId: data.handleId,
-            status: data.status,
-        });
+        const formData = new FormData();
+        formData.append("ldapUsername", data.ldapUsername);
+        formData.append("ldapName", data.ldapName);
+        formData.append("email", data.email);
+        formData.append("role", data.role);
+        formData.append("handleId", data.handleId);
+        formData.append("status", data.status);
+        formData.append("ProfilePicture", data.ProfilePicture);
+        formData.append("isRemovePicture", data.isRemovePicture);
+
+        const response = await AxiosInstance.put(`/usermanagement/users/${data.id}`, formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
 
         return { status: true, data: response.data.body };
     } catch (e) {
