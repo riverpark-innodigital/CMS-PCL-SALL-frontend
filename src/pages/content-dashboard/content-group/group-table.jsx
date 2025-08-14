@@ -11,6 +11,7 @@ import dateFormat from "dateformat";
 import { AiOutlineArrowDown, AiOutlineArrowUp } from "react-icons/ai";
 import GroupDrawer from "./group-drawer";
 import SearchInputComponent from "../../../components/content-input/search-input";
+import NotFound from "../../../assets/images/imgs/error.png";
 
 const GroupTable = () => {
   const dispatch = useDispatch();
@@ -61,8 +62,7 @@ const GroupTable = () => {
           UpdateDate:
             new Date(group.UpdateDate).toISOString().split("T")[0] ||
             "undefined",
-          supplier: group?.Supplier?.SupplierNameEn || "undefined",
-          supplierImage: group?.Supplier?.SupplierImage || "undefined",
+          image: group?.ImageName || "undefined",
           createDateText: group.CreateDate
             ? dateFormat(
                 new Date(group.CreateDate).toISOString().split("T")[0],
@@ -226,11 +226,29 @@ const GroupTable = () => {
       ...getColumnSearchProps("Product Group Name"),
       sorter: (a, b) => a.groupNameEn.localeCompare(b.groupNameEn),
       sortOrder: sortOrderName,
-      render: (_, { groupNameEn }) => (
-        <div className="flex items-center gap-2">
-          <Flex vertical>
-            <div>{groupNameEn}</div>
-          </Flex>
+      render: (_, { groupNameEn, image }) => (
+        <div className="flex gap-x-3 items-center">
+          {!image ? (
+            <div>
+              <div className="flex justify-center">
+                <img className="w-[30px]" src={NotFound} />
+              </div>
+              <div className="flex justify-center text-[12px]">
+                Not Available
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-center">
+              <img
+                className="w-[45px]"
+                src={`${import.meta.env.VITE_REDIRECT_IMG}/images/${image}`}
+                alt=""
+              />
+            </div>
+          )}
+          <div>
+            <span className="font-primaryMedium">{groupNameEn}</span>
+          </div>
         </div>
       ),
     },
