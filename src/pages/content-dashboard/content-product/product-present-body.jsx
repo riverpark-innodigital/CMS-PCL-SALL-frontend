@@ -27,19 +27,18 @@ const ProductPresentTable = ({ data }) => {
       dataIndex: "fullname",
       key: "fullname",
       width: "20%",
-      render: (_, { picture, fullname, email }) => (
+      render: (_, { picture, fullname }) => (
         <div className="flex flex-col gap-x-3">
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
             {picture ? (
               <img
                 src={`${import.meta.env.VITE_REDIRECT_IMG}/images/${picture}`}
                 alt="fullname"
-                className="flex w-[45px] h-[45px] justify-center p-1 border rounded-[10px] object-contain"
+                className="flex w-[45px] h-[45px] justify-center p-1 rounded-[10px] object-contain"
               />
             ) : null}
             {fullname}
           </div>
-          {email}
         </div>
       ),
     },

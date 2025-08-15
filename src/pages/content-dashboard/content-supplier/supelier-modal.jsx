@@ -329,7 +329,11 @@ export const CreateSupplier = () => {
         </div>
         <div className="w-full flex justify-end">
           <div className="gap-x-3 mt-[25px] flex w-[30%] 2xl:w-[30%] justify-between items-center">
-            <OutlineBTN lable="Cancel" func={() => setOpenResponsive(false)} size="large" />
+            <OutlineBTN lable="Cancel" func={() => {
+                setOpenResponsive(false)
+                setValidNameEN('');
+                setvalidfile('');
+                }} size="large" />
             <ButtonFullComponent isLoading={loading} lable="Create New Supplier" func={handlerSupplier} size="large" />
           </div>
         </div>
@@ -607,7 +611,11 @@ export const UpdateSupplier = ({ supId, data }) => {
         </div>
         <div className="w-full flex justify-end">
           <div className="gap-x-3 mt-[25px] flex w-[30%] 2xl:w-[30%] justify-between items-center">
-            <OutlineBTN lable="Cancel" func={() => setOpenResponsive(false)} size="large" />
+            <OutlineBTN lable="Cancel" func={() => {
+              setOpenResponsive(false)
+              setValidNameEN('');
+              setvalidfile('');
+              }} size="large" />
             <ButtonFullComponent size="large" isLoading={loading} lable="Update Supplier" func={handlerUpdateSupplier} />
           </div>
         </div>

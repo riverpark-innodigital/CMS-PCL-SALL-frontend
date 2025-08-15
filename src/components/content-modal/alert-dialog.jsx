@@ -63,6 +63,32 @@ export const ErrorDialog = ({ title, open, onCancel, description }) => {
     );
 };
 
+export const ErrorDialog401 = ({ title, open, onCancel, description }) => {
+    return(
+        <>
+        <Modal
+            centered
+            open={open}
+            footer={false}
+            width={400}
+            closable={false}
+        >
+           <div className='flex justify-center text-[18px] font-primaryMedium mt-[20px]'>
+                <span className='text-center font-medium'>{title}</span>
+           </div>
+            <div className='mt-3 flex justify-center mb-[20px]'>
+            {
+                description &&  <span>{description}</span>
+            }
+            </div>
+           <div className='flex justify-center'>
+            <OutlineBTN otherStyle="w-[180px]" textColor='white' color="#C00101" size="large" lable="Close" func={onCancel} />
+           </div>
+        </Modal>
+        </>
+    );
+};
+
 SuccessDialog.propTypes = {
     title: PropTypes.string,
     open: PropTypes.bool.isRequired,
@@ -70,6 +96,13 @@ SuccessDialog.propTypes = {
 }
 
 ErrorDialog.propTypes = {
+    title: PropTypes.string,
+    description: PropTypes.string,
+    open: PropTypes.bool.isRequired,
+    onCancel: PropTypes.any,
+}
+
+ErrorDialog401.propTypes = {
     title: PropTypes.string,
     description: PropTypes.string,
     open: PropTypes.bool.isRequired,

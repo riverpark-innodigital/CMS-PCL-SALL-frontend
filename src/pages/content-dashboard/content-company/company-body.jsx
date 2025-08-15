@@ -33,6 +33,14 @@ const CompanyBody = () => {
     current: 1,
     pageSize: 10,
   });
+  const searchableKeys = [
+    "NameEN",
+    "BUNameEN",
+    "CreateDateText",
+    "CreateBy",
+    "tags",
+    "UpdateDateText"
+  ];
 
   const handleTableChange = (pagination, filters, sorter) => {
     setPaginationInfo({
@@ -429,8 +437,8 @@ const CompanyBody = () => {
   }, [dispatch, companys]);
 
   const filteredData = data.filter((item) =>
-    Object.values(item).some((value) =>
-      String(value).toLowerCase().includes(searchAll.toLowerCase())
+    searchableKeys.some((key) =>
+      String(item[key]).toLowerCase().includes(searchAll.toLowerCase())
     )
   );
 

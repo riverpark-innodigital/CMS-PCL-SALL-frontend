@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import DotLoading from "../content-loading/dot-loading";
 import { Button, ConfigProvider } from "antd";
 
-const OutlineBTN = ({ lable, func, color, isLoading, size, otherStyle }) => {
+const OutlineBTN = ({ lable, func, color, isLoading, size, otherStyle, textColor }) => {
     return(
         <ConfigProvider
         theme={{
@@ -23,7 +23,7 @@ const OutlineBTN = ({ lable, func, color, isLoading, size, otherStyle }) => {
                 size={size} 
                 onClick={func}
             >
-                {isLoading ? <DotLoading /> : <span className='text-gray-800 text-[14px] px-[10px]'>{lable}</span>}    
+                {isLoading ? <DotLoading /> : <span style={{ color: textColor }} className='text-gray-800 text-[14px] px-[10px]'>{lable}</span>}    
             </Button>
         </ConfigProvider>
         // <Button className={`w-full ${otherStyle}`} variant={variant} onClick={func} color={color} disabled={isLoading}>{isLoading ? <DotLoading /> : lable}</Button>
@@ -38,6 +38,7 @@ OutlineBTN.propTypes = {
     variant: PropTypes.string,
     otherStyle: PropTypes.string,
     size: PropTypes.string,
+    textColor: PropTypes.string,
 }
 
 export default OutlineBTN;

@@ -212,7 +212,7 @@ const BUModal = ({ id }) => {
             <TextArea
               OnChange={setDescription}
               value={Description}
-              maxLength={3000}
+              maxLength={5000}
               label="Description"
               placeholder="Enter The Description"
             />

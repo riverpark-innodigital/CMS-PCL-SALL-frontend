@@ -23,7 +23,7 @@ const SupplierBody = () => {
   const [searchAll, setSearchAll] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const [sortOrders, setSortOrders] = useState({
-    SupplierName: null,
+    SupplierNameEN: null,
     Company: null,
     CreateDate: null,
     Updated: null,
@@ -34,6 +34,14 @@ const SupplierBody = () => {
     current: 1,
     pageSize: 10,
   });
+  const searchableKeys = [
+    "SupplierNameEN",
+    "Company",
+    "CreateDateText",
+    "UpdateDateText",
+    "CreateBy",
+    "tags",
+  ];
 
   const handleTableChange = (pagination, filters, sorter) => {
     setPaginationInfo({
@@ -43,7 +51,7 @@ const SupplierBody = () => {
     if (Array.isArray(sorter)) {
       const firstSorter = sorter[0] || {};
       setSortOrders({
-        SupplierName: null,
+        SupplierNameEN: null,
         Company: null,
         CreateDate: null,
         Updated: null,
@@ -52,7 +60,7 @@ const SupplierBody = () => {
       });
     } else {
       setSortOrders({
-        SupplierName: null,
+        SupplierNameEN: null,
         Company: null,
         CreateDate: null,
         Updated: null,
@@ -206,20 +214,20 @@ const SupplierBody = () => {
       title: (
         <div className="flex items-center">
           Supplier Name
-          {sortOrders.SupplierName === "ascend" && (
+          {sortOrders.SupplierNameEN === "ascend" && (
             <AiOutlineArrowDown className="ml-2" />
           )}
-          {sortOrders.SupplierName === "descend" && (
+          {sortOrders.SupplierNameEN === "descend" && (
             <AiOutlineArrowUp className="ml-2" />
           )}
         </div>
       ),
-      dataIndex: "SupplierName",
-      key: "SupplierName",
+      dataIndex: "SupplierNameEN",
+      key: "SupplierNameEN",
       ...getColumnSearchProps("SupplierNameEN", "Supplier Name"),
       width: "25%",
       sorter: (a, b) => a.SupplierNameEN.localeCompare(b.SupplierNameEN),
-      sortOrder: sortOrders.SupplierName,
+      sortOrder: sortOrders.SupplierNameEN,
       render: (_, { SupplierNameEN, image }) => (
         <div className="flex gap-x-3 items-center">
           {!image ? (
@@ -453,8 +461,8 @@ const SupplierBody = () => {
   }, [dispatch, suppliers]);
 
   const filteredData = data.filter((item) =>
-    Object.values(item).some((value) =>
-      String(value).toLowerCase().includes(searchAll.toLowerCase())
+    searchableKeys.some((key) =>
+      String(item[key]).toLowerCase().includes(searchAll.toLowerCase())
     )
   );
 

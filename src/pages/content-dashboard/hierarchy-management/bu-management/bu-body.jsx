@@ -29,6 +29,14 @@ const CompanyBody = () => {
     current: 1,
     pageSize: 10,
   });
+  const searchableKeys = [
+    "Name",
+    "tags",
+    "CreateDateText",
+    "UpdateDateText",
+    "CreateBy",
+  ];
+
   const handleTableChange = (pagination, filters, sorter) => {
     setPaginationInfo({
       current: pagination.current,
@@ -340,7 +348,7 @@ const CompanyBody = () => {
           UpdateDateText: company?.UpdateDate
             ? dateFormat(company?.UpdateDate, "mediumDate")
             : "-",
-        }))
+        })).sort((a, b) => new Date(b.UpdateDate) - new Date(a.UpdateDate))
       );
 
       setIsLoading(false);
@@ -352,8 +360,8 @@ const CompanyBody = () => {
   }, [dispatch, bus]);
 
   const filteredData = data.filter((item) =>
-    Object.values(item).some((value) =>
-      String(value).toLowerCase().includes(searchAll.toLowerCase())
+    searchableKeys.some((key) =>
+      String(item[key]).toLowerCase().includes(searchAll.toLowerCase())
     )
   );
 

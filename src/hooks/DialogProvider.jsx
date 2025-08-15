@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback } from "react";
-import { ErrorDialog } from "../components/content-modal/alert-dialog";
+import { ErrorDialog401 } from "../components/content-modal/alert-dialog";
 
 const DialogContext = createContext();
 
@@ -31,7 +31,7 @@ export function DialogProvider({ children }) {
   return (
     <DialogContext.Provider value={{ showDialog, hideDialog }}>
       {children}
-      <ErrorDialog
+      <ErrorDialog401
         title={dialog.title}
         description={dialog.description}
         open={dialog.open}

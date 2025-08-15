@@ -26,6 +26,15 @@ const GroupTable = () => {
   const [searchAll, setSearchAll] = useState("");
   const isFatching = useRef(false);
   const searchInput = useRef(null);
+  const searchableKeys = [
+    "groupNameEn",
+    "groupNameTh",
+    "status",
+    "createBy",
+    "createDateText",
+    "updateBy",
+    "updateDateText"
+  ];
 
   const [paginationInfo, setPaginationInfo] = useState({
     current: 1,
@@ -267,7 +276,6 @@ const GroupTable = () => {
         },
       ],
       onFilter: (value, record) => record.status.includes(value), // ✅ Fix: Filter by status
-      sorter: (a, b) => a.status.localeCompare(b.status), // ✅ Fix: Sort alphabetically
       render: (_, { status }) => (
         <div
           style={{
@@ -370,8 +378,8 @@ const GroupTable = () => {
   ];
 
   const filteredData = tableData.filter((item) =>
-    Object.values(item).some((value) =>
-      String(value).toLowerCase().includes(searchAll.toLowerCase())
+    searchableKeys.some((key) =>
+      String(item[key]).toLowerCase().includes(searchAll.toLowerCase())
     )
   );
 

@@ -23,6 +23,7 @@ import {
 } from "@ant-design/icons";
 import MultiSelect from "../../../components/content-selector/multiple-select";
 import { ErrorDialog } from "../../../components/content-modal/alert-dialog";
+import { TbAlertTriangle } from "react-icons/tb";
 const { confirm, success } = Modal;
 
 const GroupForm = ({ groupId }) => {
@@ -146,8 +147,6 @@ const GroupForm = ({ groupId }) => {
       formData.append("Active", status);
       formData.append("productgroupImage", files);
 
-      let response;
-
       const data = {
         groupId: groupId,
         data: formData,
@@ -223,10 +222,39 @@ const GroupForm = ({ groupId }) => {
         cancelText: "Cancel",
         onOk: async () => {
           try {
-            const res = groupId
+            const response = groupId
               ? await dispatch(updateGroupById({ data }))
               : await dispatch(createGroup(formData));
-            if (!res.payload?.status) throw new Error(res.payload.error);
+
+            if (!response.payload?.status) {
+              throw new Error(response.payload.error);
+            }
+
+            if (!response || !response.payload) {
+              throw new Error("No response from server");
+            }
+
+            if (response.payload.status) {
+              message.success(
+                groupId
+                  ? "group updated successfully!"
+                  : "group created successfully!"
+              );
+              await setGroupCode("");
+              await setGroupNameEn("");
+              await setValidNameEN("");
+              await setValidSup("");
+              await setSupSelectd([]);
+              await setStatus(true);
+              await setFileList([]);
+              await setFile(null);
+              handleCloseModal();
+            } else {
+              const errorMessage = response.payload.error || "Unknown error occurred";
+              handleCloseModal();
+
+              message.error(`Failed to save group: ${errorMessage}`);
+            }
 
             //  แสดง success modal เมื่อสร้าง/อัปเดตเสร็จ
             const modal = success({
@@ -302,8 +330,8 @@ const GroupForm = ({ groupId }) => {
                       padding: 16,
                     }}
                   >
-                    <ExclamationCircleOutlined
-                      style={{ fontSize: 48, color: "#faad14" }}
+                    <TbAlertTriangle
+                      style={{ fontSize: 30, color: "#faad14" }}
                     />
                   </div>
                   <div
@@ -334,77 +362,6 @@ const GroupForm = ({ groupId }) => {
         },
       });
 
-      // check response
-      if (!response || !response.payload) {
-        throw new Error("No response from server");
-      }
-
-      if (response.payload.status) {
-        message.success(
-          groupId
-            ? "group updated successfully!"
-            : "group created successfully!"
-        );
-        await setGroupCode("");
-        await setGroupNameEn("");
-        await setValidNameEN("");
-        await setValidSup("");
-        await setSupSelectd([]);
-        await setStatus(true);
-        await setFileList([]);
-        await setFile(null);
-        handleCloseModal();
-      } else {
-        const errorMessage = response.payload.error || "Unknown error occurred";
-        handleCloseModal();
-
-        // Modal.warning({
-        //   icon: null,
-        //   title: null,
-        //   centered: true,
-        //   maskClosable: false,
-        //   closable: false,
-        //   content: (
-        //     <div style={{ textAlign: "center", padding: 20 }}>
-        //       <div
-        //         style={{
-        //           display: "inline-block",
-        //           background: "#fff7e6",
-        //           borderRadius: "50%",
-        //           padding: 16,
-        //         }}
-        //       >
-        //         <ExclamationCircleOutlined
-        //           style={{ fontSize: 48, color: "#faad14" }}
-        //         />
-        //       </div>
-        //       <div
-        //         style={{
-        //           marginTop: 16,
-        //           fontSize: 18,
-        //           fontWeight: 500,
-        //         }}
-        //       >
-        //         {errorMessage}
-        //       </div>
-        //     </div>
-        //   ),
-        //   okText: "Close",
-        //   okType: "default",
-        //   okButtonProps: {
-        //     style: {
-        //       display: "block",
-        //       width: "100%",
-        //       margin: "0 auto",
-        //     },
-        //   },
-        //   cancelButtonProps: {
-        //     style: { display: "none" },
-        //   },
-        // });
-
-        message.error(`Failed to save group: ${errorMessage}`);
-      }
     } catch (error) {
       if (error.response && error.response.data) {
         message.error(

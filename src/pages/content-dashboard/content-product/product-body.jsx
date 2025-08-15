@@ -35,6 +35,16 @@ const ProductTable = () => {
   const [searchedColumn, setSearchedColumn] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const searchInput = useRef(null);
+  const searchableKeys = [
+    "product",
+    "productGroup",
+    "supplier",
+    "Campany",
+    "CreateDateText",
+    "createdBy",
+    "status",
+    "UpdateDateText"
+  ];
 
   const [paginationInfo, setPaginationInfo] = useState({
     current: 1,
@@ -63,6 +73,8 @@ const ProductTable = () => {
           frmDate: product.frmDate,
           createdDate: product.CreateDate,
           updatedDate: product.Updatedate,
+          CreateDateText: dateFormat(product?.CreateDate, "mediumDate"),
+          UpdateDateText: dateFormat(product?.UpdateDate, "mediumDate"),
           createdBy: product.CreateBy,
           Campany: product.Campany,
           status: product.Active ? "Active" : "Inactive",
@@ -341,7 +353,6 @@ const ProductTable = () => {
         },
       ],
       onFilter: (value, record) => record.status.includes(value), // ✅ Fix: Filter by status
-      sorter: (a, b) => a.status.localeCompare(b.status), // ✅ Fix: Sort alphabetically
       ellipsis: true,
       render: (_, { status }) => (
         <div
@@ -422,8 +433,8 @@ const ProductTable = () => {
   };
 
   const filteredData = tableData.filter((item) =>
-    Object.values(item).some((value) =>
-      String(value).toLowerCase().includes(searchAll.toLowerCase())
+    searchableKeys.some((key) =>
+      String(item[key]).toLowerCase().includes(searchAll.toLowerCase())
     )
   );
 
