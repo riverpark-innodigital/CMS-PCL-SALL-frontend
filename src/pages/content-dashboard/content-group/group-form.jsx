@@ -24,6 +24,7 @@ import {
 import MultiSelect from "../../../components/content-selector/multiple-select";
 import { ErrorDialog } from "../../../components/content-modal/alert-dialog";
 import { TbAlertTriangle } from "react-icons/tb";
+import { FiCheckCircle } from "react-icons/fi";
 const { confirm, success } = Modal;
 
 const GroupForm = ({ groupId }) => {
@@ -198,7 +199,7 @@ const GroupForm = ({ groupId }) => {
                 padding: 16,
               }}
             >
-              <CheckCircleOutlined style={{ fontSize: 48, color: "#52c41a" }} />
+              <FiCheckCircle style={{ fontSize: 48, color: "#52c41a" }} />
             </div>
             <div
               style={{
@@ -287,7 +288,7 @@ const GroupForm = ({ groupId }) => {
                       padding: 16,
                     }}
                   >
-                    <CheckCircleOutlined
+                    <FiCheckCircle
                       style={{ fontSize: 48, color: "#52c41a" }}
                     />
                   </div>

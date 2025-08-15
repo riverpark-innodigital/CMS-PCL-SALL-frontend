@@ -5,13 +5,13 @@ import { Input, ConfigProvider } from 'antd';
 const TextArea = ({ label, OnChange, value, maxLength, format, vildate, required, placeholder }) => {
 
     const { TextArea } = Input;
-    const [error, setError] = useState('');
-    const [charCount, setCharCount] = useState(value.length); // Tracks the character count
+    const [charCount, setCharCount] = useState(0); // Tracks the character count
     const [, setTyped] = useState(false);
 
     useEffect(() => {
-        setCharCount(value?.length || 0);
-    }, [value]);
+        const normalizedValue = value.replace(/\r\n/g, "\n");
+        setCharCount(normalizedValue.length);
+    }, [value, maxLength]);
 
     const handleChangeValue = (e) => {
         const inputValue = e.target.value;
@@ -22,29 +22,20 @@ const TextArea = ({ label, OnChange, value, maxLength, format, vildate, required
             if (regexThai.test(inputValue) && inputValue.length <= (maxLength === undefined ? 255 : maxLength)) {
                 OnChange(inputValue);
                 setCharCount(inputValue.length);
-                setError(''); // Clear error
                 setTyped(true);
-              } else if (!regexThai.test(inputValue)) {
-                setError('Invalid character!');
-              }   
+              }
         } else if (format === false) {
             if (regexEN.test(inputValue) && inputValue.length <= (maxLength === undefined ? 255 : maxLength)) {
                 OnChange(inputValue);
                 setCharCount(inputValue.length);
-                setError(''); // Clear error
                 setTyped(true);
-              } else if (!regexEN.test(inputValue)) {
-                setError('Invalid character!');
-              }  
+              }
         } else if (format === undefined) {
             if (inputValue.length <= (maxLength === undefined ? 255 : maxLength)) {
                 OnChange(inputValue);
                 setCharCount(inputValue.length);
-                setError(''); // Clear error
                 setTyped(true);
-            } else if (!regexEN.test(inputValue)) {
-                setError('Invalid character!');
-            }  
+            }
         }
     }
 
@@ -73,9 +64,6 @@ const TextArea = ({ label, OnChange, value, maxLength, format, vildate, required
                         <p className="text-[12px]">
                             ({charCount}/{maxLength})
                         </p>
-                    }
-                    {
-                        error && <p className="text-red-500 text-[12px]">{error}</p>
                     }
                     {
                         vildate && <p className="text-red-500 text-[12px]">{vildate}</p>

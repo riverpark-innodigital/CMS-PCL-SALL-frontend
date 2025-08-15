@@ -462,6 +462,8 @@ export const UpdateSupplier = ({ supId, data }) => {
       setOpenConfirm(false);
       setIsresetColor(true);
       setSuccessModal(true);
+      setvalidfile('');
+      setvalidCompany('');
     }
 
     

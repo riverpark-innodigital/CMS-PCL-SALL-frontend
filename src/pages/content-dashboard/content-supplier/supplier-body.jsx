@@ -296,7 +296,6 @@ const SupplierBody = () => {
         const tagValue = record.tags ? record.tags.toString() : "";
         return tagValue.includes(value);
       },
-      sorter: (a, b) => (a.tags || "").localeCompare(b.tags || ""), // ✅ Handles undefined values
       render: (_, { tags }) => (
         <div
           style={{
@@ -450,7 +449,7 @@ const SupplierBody = () => {
           )
             .filter(Boolean)
             .join(", "),
-        }))
+        })).sort((a, b) => new Date(b.UpdateDate) - new Date(a.UpdateDate))
       );
       setIsLoading(false);
     }
