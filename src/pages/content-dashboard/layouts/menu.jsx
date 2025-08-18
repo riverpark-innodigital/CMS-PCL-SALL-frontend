@@ -24,7 +24,7 @@ const MenuOption = [
     icon: <FiUser />,
     submenu: [
       { label: 'User Management', path: '/hierarchy-management/user' },
-      { label: 'Group & Sale team', path: '/hierarchy-management/saleteam' },
+      { label: 'Sale team', path: '/hierarchy-management/saleteam' },
       { label: 'Company', path: '/company' },
       { label: 'Business Unit', path: '/hierarchy-management/bu' },
       { label: 'Supplier', path: '/supplier' },
