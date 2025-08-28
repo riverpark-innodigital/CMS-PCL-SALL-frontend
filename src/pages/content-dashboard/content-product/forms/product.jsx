@@ -359,6 +359,7 @@ const ProductForm = () => {
       setfileChildren((prev) =>
         prev.filter((present) => present.file.uid !== file.uid)
       );
+      setPresentFileRemove((prev) => [...prev, file.uid]);
     }
   };
 
