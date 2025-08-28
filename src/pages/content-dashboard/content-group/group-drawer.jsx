@@ -8,16 +8,33 @@ import GroupForm from "./group-form";
 import DetailLoading from "../../../components/content-loading/detail-loading";
 import { EnglishFormat } from "../../../hooks/dateformat";
 import { Drawer } from "antd";
-import { getGroupById } from "../../../slicers/groupSlicer";
-import { Table } from 'antd';
+import {
+  fetchAllGroups,
+  getGroupById,
+} from "../../../slicers/groupSlicer";
+import { Table } from "antd";
+import { TrashIcon } from "../../../components/Icons/trash-icon";
+import { ConfirmModal } from "../../../components/content-modal/comfirm-modal";
+import {
+  ErrorDialog,
+  SuccessDialog,
+} from "../../../components/content-modal/alert-dialog";
+import { TrashPopupIcon } from "../../../components/Icons/trashpopup-icon";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const GroupDrawer = ({ groupId }) => {
+  const authToken = Cookies.get("authToken");
   const [openRight, setOpenRight] = React.useState(false);
   const dispatch = useDispatch();
   const Facthing = useRef(false);
   const [isLoading, setIsLoading] = useState(false);
   const [tableData, setTableData] = useState([]);
   const currenProductGroup = useSelector((state) => state.group.group);
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [successModal, setSuccessModal] = useState(false);
+  const [errorMSG, setErrorMSG] = useState("");
+  const [errorModal, setErrorModal] = useState(false);
   const open = 2;
 
   const openDrawerRight = async () => {
@@ -31,9 +48,9 @@ const GroupDrawer = ({ groupId }) => {
       if (response.payload.status === true) {
         console.log();
         const data = response.payload.data.ProductGroupSup.map((sup, key) => ({
-            key: key + 1,
-            SupName: sup.Supplier?.SupplierNameEn,
-            Image: sup.Supplier?.SupplierImage,
+          key: key + 1,
+          SupName: sup.Supplier?.SupplierNameEn,
+          Image: sup.Supplier?.SupplierImage,
         }));
         setTableData(data);
         Facthing.current = false;
@@ -46,34 +63,61 @@ const GroupDrawer = ({ groupId }) => {
 
   const columns = [
     {
-      title: '#',
-      dataIndex: 'No',
-      key: 'No',
-      width: '5%',
-      render: (_, { key }) => (
-        <div>
-          {key}
+      title: "#",
+      dataIndex: "No",
+      key: "No",
+      width: "5%",
+      render: (_, { key }) => <div>{key}</div>,
+    },
+    {
+      title: "Supplier Name",
+      dataIndex: "groupName",
+      key: "groupName",
+      render: (_, { SupName, Image }) => (
+        <div className="flex items-center gap-2">
+          <div className="flex justify-center p-1 border rounded-[10px]">
+            <img
+              width={40}
+              height={40}
+              src={`${import.meta.env.VITE_REDIRECT_IMG}/images/${Image}`}
+              alt=""
+            />
+          </div>
+          <div>{SupName}</div>
         </div>
       ),
     },
-    {
-      title: 'Supplier Name',
-      dataIndex: 'groupName',
-      key: 'groupName',
-      render: (_, { SupName, Image }) => (
-        <div className="flex items-center gap-2">
-            <div className='flex justify-center p-1 border rounded-[10px]'>
-              <img width={40} height={40} src={`${import.meta.env.VITE_REDIRECT_IMG}/images/${Image}`} alt="" />
-            </div>
-            <div>{SupName}</div>
-        </div>
-      ),
-    }
   ];
 
   const onClose = () => {
     setOpenRight(false);
   };
+
+  const handlerCancelConfirm = () => {
+    setOpenConfirm(false);
+  };
+
+  const deleteProductGroup = async () => {
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_BASE_URL}/productGroup/group/${groupId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setSuccessModal(true);
+      setOpenConfirm(false);
+      await dispatch(fetchAllGroups());
+    } catch (error) {
+      setErrorMSG(error.response?.data?.message || error.message);
+      setOpenConfirm(false);
+      setErrorModal(true);
+    }
+  };
+
   return (
     <React.Fragment>
       <div className="flex flex-wrap gap-4">
@@ -113,7 +157,38 @@ const GroupDrawer = ({ groupId }) => {
             {isLoading ? (
               <div className="h-[45px] w-[45px] rounded-md bg-gray-300 animate-pulse animate-infinite animate-duration-1000 animate-ease-in-out"></div>
             ) : (
-              <GroupForm groupId={groupId} />
+              <div className="flex items-center gap-2">
+                <GroupForm groupId={groupId} />
+                <button onClick={() => setOpenConfirm(true)}>
+                  <TrashIcon className="w-5 h-5 text-red-500" />
+                </button>
+                <ConfirmModal
+                  title="Do you want to delete?"
+                  description="Confirm to proceed with Remove this product group"
+                  open={openConfirm}
+                  onCancel={handlerCancelConfirm}
+                  onConfirm={deleteProductGroup}
+                  color="#C00101"
+                  notShowIcon={true}
+                />
+                <SuccessDialog
+                  title="Removed successfully"
+                  onCancel={() => {
+                    setSuccessModal(false);
+                    setOpenRight(false);
+                  }}
+                  open={successModal}
+                  icon={<TrashPopupIcon />}
+                />
+                <ErrorDialog
+                  title={errorMSG}
+                  open={errorModal}
+                  onCancel={() => {
+                    setErrorMSG("");
+                    setErrorModal(false);
+                  }}
+                />
+              </div>
             )}
           </div>
         </div>
@@ -137,36 +212,54 @@ const GroupDrawer = ({ groupId }) => {
                   </span>
                 </div>
                 <div className="w-full my-5">
-                    <span className="font-primaryBold text-[16px]">Product Group Name</span>
-                    <span className="block">{currenProductGroup?.GroupNameEn}</span>
+                  <span className="font-primaryBold text-[16px]">
+                    Product Group Name
+                  </span>
+                  <span className="block">
+                    {currenProductGroup?.GroupNameEn}
+                  </span>
                 </div>
                 <div className="grid-cols-3 grid gap-[10px]">
-                    <div className="w-full my-5">
-                        <span className="font-primaryBold text-[16px]">Created by</span>
-                        <span className="block">{currenProductGroup?.CreateBy}</span>
-                    </div>
-                    <div className="w-full my-5">
-                        <span className="font-primaryBold text-[16px]">Created date</span>
-                        <span className="block">
-                            {!currenProductGroup?.CreateDate
-                            ? "-"
-                            : EnglishFormat(currenProductGroup?.CreateDate)}
-                        </span>
-                    </div>
-                    <div className="w-full my-5">
-                        <span className="font-primaryBold text-[16px]">Last Updated</span>
-                        <span className="block">
-                            {!currenProductGroup?.UpdateDate
-                            ? "-"
-                            : EnglishFormat(currenProductGroup?.UpdateDate)}
-                        </span>
-                    </div>
+                  <div className="w-full my-5">
+                    <span className="font-primaryBold text-[16px]">
+                      Created by
+                    </span>
+                    <span className="block">
+                      {currenProductGroup?.CreateBy}
+                    </span>
+                  </div>
+                  <div className="w-full my-5">
+                    <span className="font-primaryBold text-[16px]">
+                      Created date
+                    </span>
+                    <span className="block">
+                      {!currenProductGroup?.CreateDate
+                        ? "-"
+                        : EnglishFormat(currenProductGroup?.CreateDate)}
+                    </span>
+                  </div>
+                  <div className="w-full my-5">
+                    <span className="font-primaryBold text-[16px]">
+                      Last Updated
+                    </span>
+                    <span className="block">
+                      {!currenProductGroup?.UpdateDate
+                        ? "-"
+                        : EnglishFormat(currenProductGroup?.UpdateDate)}
+                    </span>
+                  </div>
                 </div>
                 <div className="mt-5 border-2 rounded-[10px]">
-                    <div className="p-[20px]">
-                        <span className="font-primaryMedium text-[18px]">Supplier Name</span>
-                    </div>
-                    <Table columns={columns} dataSource={tableData} position={["bottomCenter"]} />
+                  <div className="p-[20px]">
+                    <span className="font-primaryMedium text-[18px]">
+                      Supplier Name
+                    </span>
+                  </div>
+                  <Table
+                    columns={columns}
+                    dataSource={tableData}
+                    position={["bottomCenter"]}
+                  />
                 </div>
               </AccordionBody>
             </Accordion>

@@ -8,7 +8,7 @@ import { Image, Tag, notification, Empty, Drawer } from 'antd';
 import DetailLoading from "../../../components/content-loading/detail-loading";
 import { IconButton } from "@material-tailwind/react";
 // import SupplierModal from "./supelier-modal";
-import { getProductById, getPresentUserByProduct } from "../../../slicers/productsaleSlicer";
+import { getProductById, getPresentUserByProduct, fetchAllProducts } from "../../../slicers/productsaleSlicer";
 import { getFolderById } from "../../../slicers/productfileSlicer";
 import { FiEdit3 } from "react-icons/fi";
 import ProductInformation from "./content-details/prodiuct-information";
@@ -17,10 +17,16 @@ import ProductFolderDetial from "./content-details/product-folder";
 import ReactPlayer from 'react-player'
 import PresentationDetail from "./content-details/presentation";
 import ProductPresentTable from "./product-present-body";
+import { TrashIcon } from "../../../components/Icons/trash-icon";
+import { ConfirmModal } from "../../../components/content-modal/comfirm-modal";
+import { ErrorDialog, SuccessDialog } from "../../../components/content-modal/alert-dialog";
+import { TrashPopupIcon } from "../../../components/Icons/trashpopup-icon";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const ProductCanvas = ({ proId }) => {
 
-
+  const authToken = Cookies.get("authToken");
   const dispatch = useDispatch();
   const [openRight, setOpenRight] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +37,10 @@ const ProductCanvas = ({ proId }) => {
   const [foldersData, setFoldersData] = useState([]);
   const [presentData, setPresentData] = useState([]);
   const [presentUserData, setPresentUserData] = useState([]);
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [successModal, setSuccessModal] = useState(false);
+  const [errorMSG, setErrorMSG] = useState("");
+  const [errorModal, setErrorModal] = useState(false);
   const Facthing = useRef(false);
 
   const notFoundTag = <Tag bordered={false} color="#bfbfbf"> Not Found </Tag>
@@ -112,6 +122,27 @@ const ProductCanvas = ({ proId }) => {
     setOpenRight(false);
   };
 
+  const deleteProduct = async () => {
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_BASE_URL}/productsale/product/${proId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setSuccessModal(true);
+      setOpenConfirm(false);
+      await dispatch(fetchAllProducts());
+    } catch (error) {
+      setErrorMSG(error.response?.data?.message || error.message);
+      setOpenConfirm(false);
+      setErrorModal(true);
+    }
+  };
+
   return (
     <>
       <div className="flex flex-wrap gap-4">
@@ -148,9 +179,40 @@ const ProductCanvas = ({ proId }) => {
               isLoading ?
               <div className="h-[45px] w-[45px] rounded-md bg-gray-300 animate-pulse animate-infinite animate-duration-1000 animate-ease-in-out"></div>
               :
-              <IconButton onClick={() => window.location.href = `${import.meta.env.VITE_REDIRECT_URL}/product/update/${proId}` } className="rounded-full text-xl text-gray-600" variant="text">
-                <FiEdit3 />
-              </IconButton>
+              <div className="flex items-center gap-2">
+                <IconButton onClick={() => window.location.href = `${import.meta.env.VITE_REDIRECT_URL}/product/update/${proId}` } className="rounded-full text-xl text-gray-600" variant="text">
+                  <FiEdit3 />
+                </IconButton>
+                <button onClick={() => setOpenConfirm(true)}>
+                  <TrashIcon className="w-5 h-5 text-red-500" />
+                </button>
+                <ConfirmModal
+                  title="Do you want to delete?"
+                  description="Confirm to proceed with Remove this product"
+                  open={openConfirm}
+                  onCancel={()=>setOpenConfirm(false)}
+                  onConfirm={deleteProduct}
+                  color="#C00101"
+                  notShowIcon={true}
+                />
+                <SuccessDialog
+                  title="Removed successfully"
+                  onCancel={() => {
+                    setSuccessModal(false);
+                    setOpenRight(false);
+                  }}
+                  open={successModal}
+                  icon={<TrashPopupIcon />}
+                />
+                <ErrorDialog
+                  title={errorMSG}
+                  open={errorModal}
+                  onCancel={() => {
+                    setErrorMSG("");
+                    setErrorModal(false);
+                  }}
+                />
+              </div>
             }
           </div>
         </div>

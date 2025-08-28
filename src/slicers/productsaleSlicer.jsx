@@ -94,19 +94,24 @@ export const updateProductFile = createAsyncThunk('productsale/updateProductFile
             );
 
             await filteredFolders.map(async (folder) => {
-                let files = folder.File;
-                for (const file of files) {
+                const files = folder.File;
+                for (const fileObj of files) {
+                    const fileArray = fileObj.File;
+                    for (const singleFile of fileArray) {
+
                     const formData = new FormData();
-                    formData.append('ProductFileNameTh', file.File.name);
-                    formData.append('ProductFileNameEn', file.File.name);
+                    formData.append('ProductFileNameTh', singleFile.name);
+                    formData.append('ProductFileNameEn', singleFile.name);
                     formData.append('ProductFolderId', folder.FolderId);
-                    formData.append('ProductFile', file.File.originFileObj);
+                    formData.append('ProductFile', singleFile.originFileObj);
+                    formData.append('ProductFileId', singleFile.uid);
                     formData.append('Active', true);
-                    
-                    const createFile = await AxiosInstanceMultipart.post(`/productFile`, formData);
-                    console.log('creating file by folder id -->', createFile);
+
+                    await AxiosInstanceMultipart.post(`/productFile`, formData);
+                    }
                 }
-            })
+                });
+
         }
 
         if (NoTfilteredFolders.length !== 0) {

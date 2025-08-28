@@ -9,6 +9,7 @@ import { ErrorDialog } from '../../../../components/content-modal/alert-dialog';
 const FolderFile = ({
   id,
   folderName,
+  folderNameEN,
   onRemove,
   onRename,
   files,
@@ -52,6 +53,9 @@ const FolderFile = ({
    const handleChange = ({ fileList: newFileList }) => {
      setFileList(newFileList);
      // ... ถ้าจะส่งขึ้น parent ก็เรียก props.files(id, newFileList) ได้เลย
+     if (files) {
+        files(id, newFileList, tempName, folderNameEN);
+      }
    };
 
   const handleFileChange = ({ file }) => {
@@ -118,7 +122,7 @@ const FolderFile = ({
             <div className="flex items-center gap-2">
               <div
                 className={`w-[20px] h-[20px] text-[20px] text-gray-600 transform duration-100 ${
-                  openFolder ? "rotate-180" : ""
+                  openFolder ? "" : "rotate-180"
                 }`}
                 onClick={() => setOpenFolder(!openFolder)}
               >

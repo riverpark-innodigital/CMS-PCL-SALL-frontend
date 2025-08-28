@@ -254,8 +254,7 @@ const ProductForm = () => {
   };
 
   const getFolderFile = (id, file, folderNameEN, folderNameTH) => {
-    const isDuplicate = folder.some((comp) => comp.file.uid === file.uid);
-
+    const isDuplicate = folder.some((comp) => comp.id === id);
     if (!isDuplicate) {
       setFolder([
         ...folder,
@@ -266,8 +265,15 @@ const ProductForm = () => {
           file: file,
         },
       ]);
+    } else {
+      setFolder(
+        folder.map((comp) =>
+          comp.id === id ? { ...comp, file: file } : comp
+        )
+      );
     }
   };
+
 
   const handlerRemoveFiles = async (e) => {
     await setFileRemove([
@@ -1222,7 +1228,7 @@ const ProductForm = () => {
                     folderNameEN={comp.folderNameEN}
                     onRemove={removeComponent}
                     onRename={renameComponent}
-                    files={getFolderFile}
+                    files={getFolderFile}//
                     defaultFileList={comp.file === undefined ? null : comp.file}
                     isLoading={isLoading}
                     onRemovefile={handlerRemoveFiles}
