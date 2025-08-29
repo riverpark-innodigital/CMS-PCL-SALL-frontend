@@ -332,7 +332,6 @@ const CompanyBody = () => {
     bus.length === 0 && GetAll();
 
     if (bus.length !== 0) {
-      console.log(bus);
       setData(
         bus?.map((company, key) => ({
           key: company?.BusinessUnitId,

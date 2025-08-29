@@ -7,9 +7,15 @@ import { useSelector, useDispatch } from "react-redux";
 import DetailLoading from "../../../../components/content-loading/detail-loading";
 import { EnglishFormat } from "../../../../hooks/dateformat";
 import { Drawer } from "antd";
-import { GettingCurrentBU } from "../../../../slicers/businessuintSlicer";
+import { GettingAllBU, GettingCurrentBU } from "../../../../slicers/businessuintSlicer";
 import BUSINESS_UNIT_SHECEMA from "../../../../utils/schema/bu";
 import BUModal from "./bu-modal";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { TrashIcon } from "../../../../components/Icons/trash-icon";
+import { ConfirmModal } from "../../../../components/content-modal/comfirm-modal";
+import { ErrorDialog, SuccessDialog } from "../../../../components/content-modal/alert-dialog";
+import { TrashPopupIcon } from "../../../../components/Icons/trashpopup-icon";
 
 const CompanyDrawer = ({ buid }) => {
   const [openRight, setOpenRight] = React.useState(false);
@@ -18,6 +24,11 @@ const CompanyDrawer = ({ buid }) => {
   const [isLoading, setIsLoading] = useState(false);
   const currentbu = useSelector((state) => state.bu.currentbu);
   const open = 2;
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [successModal, setSuccessModal] = useState(false);
+  const [errorMSG, setErrorMSG] = useState("");
+  const [errorModal, setErrorModal] = useState(false);
+  const authToken = Cookies.get("authToken");
 
   const openDrawerRight = async () => {
     try {
@@ -39,6 +50,31 @@ const CompanyDrawer = ({ buid }) => {
   const onClose = () => {
     setOpenRight(false);
   };
+
+  const handlerCancelConfirm = () => {
+    setOpenConfirm(false);
+  };
+
+  const deleteBU = async () => {
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_BASE_URL}/bumanagement/businessunit/${buid}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setSuccessModal(true);
+      setOpenConfirm(false);
+    } catch (error) {
+      setErrorMSG(error.response?.data?.message || error.message);
+      setOpenConfirm(false);
+      setErrorModal(true);
+    }
+  };
+
   return (
     <React.Fragment>
       <div className="flex flex-wrap gap-4">
@@ -78,12 +114,39 @@ const CompanyDrawer = ({ buid }) => {
             {isLoading ? (
               <div className="h-[45px] w-[45px] rounded-md bg-gray-300 animate-pulse animate-infinite animate-duration-1000 animate-ease-in-out"></div>
             ) : (
+              <div className="flex items-center gap-2">
               <BUModal id={buid} />
-              // <CompanyModal
-              //   data={currentCompany}
-              //   comId={comId}
-              //   conditions="edit"
-              // />
+              <button onClick={() => setOpenConfirm(true)}>
+                <TrashIcon className="w-5 h-5 text-red-500" />
+              </button>
+              <ConfirmModal
+                title="Do you want to delete?"
+                description="Confirm to proceed with Remove this business unit"
+                open={openConfirm}
+                onCancel={handlerCancelConfirm}
+                onConfirm={deleteBU}
+                color="#C00101"
+                notShowIcon={true}
+              />
+              <SuccessDialog
+                title="Removed successfully"
+                onCancel={async () => {
+                  setSuccessModal(false);
+                  setOpenRight(false);
+                  await dispatch(GettingAllBU());
+                }}
+                open={successModal}
+                icon={<TrashPopupIcon />}
+              />
+              <ErrorDialog
+                title={errorMSG}
+                open={errorModal}
+                onCancel={() => {
+                  setErrorMSG("");
+                  setErrorModal(false);
+                }}
+              />
+              </div>
             )}
           </div>
         </div>

@@ -4,12 +4,18 @@ import { FaEye } from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";
 import PropTypes from "prop-types";
 import { useSelector, useDispatch } from "react-redux";
-import { GettingCompanyById } from "../../../slicers/companySlicer";
+import { GettingAllCompany, GettingCompanyById } from "../../../slicers/companySlicer";
 import CompanyModal from "./company-modal";
 import DocGif from "../../../assets/images/gif/copy.gif";
 import DetailLoading from "../../../components/content-loading/detail-loading";
 import { EnglishFormat } from "../../../hooks/dateformat";
 import { Drawer } from "antd";
+import { TrashIcon } from "../../../components/Icons/trash-icon";
+import { ConfirmModal } from "../../../components/content-modal/comfirm-modal";
+import { ErrorDialog, SuccessDialog } from "../../../components/content-modal/alert-dialog";
+import { TrashPopupIcon } from "../../../components/Icons/trashpopup-icon";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const CompanyDrawer = ({ comId }) => {
   const [openRight, setOpenRight] = React.useState(false);
@@ -18,6 +24,11 @@ const CompanyDrawer = ({ comId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const currentCompany = useSelector((state) => state.company.currentCompany);
   const open = 2;
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [successModal, setSuccessModal] = useState(false);
+  const [errorMSG, setErrorMSG] = useState("");
+  const [errorModal, setErrorModal] = useState(false);
+  const authToken = Cookies.get("authToken");
 
   const openDrawerRight = async () => {
     try {
@@ -39,6 +50,31 @@ const CompanyDrawer = ({ comId }) => {
   const onClose = () => {
     setOpenRight(false);
   };
+
+  const handlerCancelConfirm = () => {
+    setOpenConfirm(false);
+  };
+
+  const deleteCompany = async () => {
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_BASE_URL}/companyManage/compamy/${comId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setSuccessModal(true);
+      setOpenConfirm(false);
+    } catch (error) {
+      setErrorMSG(error.response?.data?.message || error.message);
+      setOpenConfirm(false);
+      setErrorModal(true);
+    }
+  };
+
   return (
     <React.Fragment>
       <div className="flex flex-wrap gap-4">
@@ -78,11 +114,43 @@ const CompanyDrawer = ({ comId }) => {
             {isLoading ? (
               <div className="h-[45px] w-[45px] rounded-md bg-gray-300 animate-pulse animate-infinite animate-duration-1000 animate-ease-in-out"></div>
             ) : (
+              <div className="flex items-center gap-2">
               <CompanyModal
                 data={currentCompany}
                 comId={comId}
                 conditions="edit"
               />
+              <button onClick={() => setOpenConfirm(true)}>
+                <TrashIcon className="w-5 h-5 text-red-500" />
+              </button>
+              <ConfirmModal
+                title="Do you want to delete?"
+                description="Confirm to proceed with Remove this company"
+                open={openConfirm}
+                onCancel={handlerCancelConfirm}
+                onConfirm={deleteCompany}
+                color="#C00101"
+                notShowIcon={true}
+              />
+              <SuccessDialog
+                title="Removed successfully"
+                onCancel={async () => {
+                  setSuccessModal(false);
+                  setOpenRight(false);
+                  await dispatch(GettingAllCompany());
+                }}
+                open={successModal}
+                icon={<TrashPopupIcon />}
+              />
+              <ErrorDialog
+                title={errorMSG}
+                open={errorModal}
+                onCancel={() => {
+                  setErrorMSG("");
+                  setErrorModal(false);
+                }}
+              />
+              </div>
             )}
           </div>
         </div>

@@ -162,16 +162,13 @@ export const CreateCompany = () => {
     try {
       setLoading(false);
 
-      if (!NameEN || files === null || Company === null) {
+      if (!NameEN || files === null ) {
         NameEN === ""
           ? setValidNameEN("Please complete all the required information.")
           : setValidNameEN("");
         files === null
           ? setvalidfile("Please complete all the required information.")
           : setvalidfile("");
-        Company === null
-          ? setvalidCom("Please complete all the required information.")
-          : setvalidCom("");
         setLoading(false);
         return;
       }
@@ -413,7 +410,7 @@ export const CreateCompany = () => {
           </div>
           <div className="mt-5">
             <span className="text-gray-800 font-primaryMedium">
-              Upload company file <span className="text-red-500">*</span>
+              Upload company profile 
             </span>
           </div>
           <div className="w-full mt-1">
