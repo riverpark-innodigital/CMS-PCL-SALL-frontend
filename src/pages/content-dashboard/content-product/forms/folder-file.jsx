@@ -149,6 +149,7 @@ const FolderFile = ({
               <Dragger
                 name="file"
                 listType="picture"
+                multiple
                 fileList={fileList}
                 // onChange={handleFileChange}
                 onChange={handleChange}

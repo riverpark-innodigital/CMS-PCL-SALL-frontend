@@ -5,7 +5,7 @@ import NormalCard from "../../../components/content-card/normal-card";
 const ProductPresentTable = ({ data }) => {
   const [paginationInfo, setPaginationInfo] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 50,
   });
 
   const columns = [

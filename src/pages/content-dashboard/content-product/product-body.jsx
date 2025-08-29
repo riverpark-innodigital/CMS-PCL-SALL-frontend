@@ -48,7 +48,7 @@ const ProductTable = () => {
 
   const [paginationInfo, setPaginationInfo] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 50,
   });
 
 

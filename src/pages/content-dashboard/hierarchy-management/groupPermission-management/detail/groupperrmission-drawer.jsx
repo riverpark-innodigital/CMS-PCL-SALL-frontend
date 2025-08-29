@@ -149,7 +149,7 @@ const GroupPermissionDrawerComponent = ({ GroupPermissionID }) => {
                     <Table
                         columns={columns}
                         dataSource={tableData}
-                        pagination={{ pageSize: 10 }}
+                        pagination={{ pageSize: 50 }}
                     />
                 }
             </div>

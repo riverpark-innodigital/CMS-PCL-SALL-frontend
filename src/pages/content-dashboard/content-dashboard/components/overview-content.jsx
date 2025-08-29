@@ -26,7 +26,7 @@ const OverviewContent = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [paginationInfo, setPaginationInfo] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 50,
   });
 
   useEffect(() => {
@@ -359,6 +359,7 @@ const OverviewContent = () => {
             columns={columns}
             dataSource={tableData}
             position={["bottomCenter"]}
+            pagination={{ pageSize: 50 }}
           />
         )}
       </div>

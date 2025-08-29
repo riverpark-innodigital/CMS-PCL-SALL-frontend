@@ -27,7 +27,7 @@ const CompanyBody = () => {
   const [data, setData] = useState([]);
   const [paginationInfo, setPaginationInfo] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 50,
   });
   const searchableKeys = [
     "Name",
@@ -390,6 +390,7 @@ const CompanyBody = () => {
               onChange={handleTableChange}
               columns={columns}
               dataSource={data && filteredData}
+              pagination={{ pageSize: 50 }}
             />
           )}
         </div>

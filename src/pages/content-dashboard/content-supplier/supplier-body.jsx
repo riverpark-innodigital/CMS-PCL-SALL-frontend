@@ -32,7 +32,7 @@ const SupplierBody = () => {
   const searchInput = useRef(null);
   const [paginationInfo, setPaginationInfo] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 50,
   });
   const searchableKeys = [
     "SupplierNameEN",
@@ -490,6 +490,7 @@ const SupplierBody = () => {
               onChange={handleTableChange}
               columns={columns}
               dataSource={data && filteredData}
+              pagination={{ pageSize: 50 }}
             />
           )}
         </div>

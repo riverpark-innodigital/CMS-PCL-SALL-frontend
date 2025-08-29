@@ -38,7 +38,7 @@ const GroupTable = () => {
 
   const [paginationInfo, setPaginationInfo] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 50,
   });
 
   const [load, setLoad] = useState(false);
@@ -415,6 +415,7 @@ const GroupTable = () => {
               columns={columns}
               dataSource={tableData && filteredData}
               position={["bottomCenter"]}
+              pagination={{ pageSize: 50 }}
             />
           )}
         </div>

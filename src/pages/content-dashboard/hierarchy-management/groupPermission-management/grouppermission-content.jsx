@@ -33,7 +33,7 @@ const GroupPermissionContent = () => {
   const searchInput = useRef(null);
   const [paginationInfo, setPaginationInfo] = useState({
     current: 1,
-    pageSize: 10,
+    pageSize: 50,
   });
 
   useEffect(() => {
@@ -457,7 +457,7 @@ const GroupPermissionContent = () => {
               columns={columns}
               onChange={handleTableChange}
               dataSource={tableData && filteredData}
-              pagination={{ pageSize: 10 }}
+              pagination={{ pageSize: 50 }}
             />
           )}
         </div>
