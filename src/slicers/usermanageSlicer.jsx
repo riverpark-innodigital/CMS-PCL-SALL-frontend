@@ -66,6 +66,30 @@ export const AddnewSingleLdapUser = createAsyncThunk('usermanage/AddnewSingleLda
     }
 });
 
+export const AddnewSingleLocalUser = createAsyncThunk('usermanage/AddnewSingleLocalUser', async (data) => {
+    try {
+        const formData = new FormData();
+        formData.append("username", data.username);
+        formData.append("email", data.email);
+        formData.append("role", data.role);
+        formData.append("password", data.password);
+        formData.append("status", data.status);
+        formData.append("ProfilePicture", data.ProfilePicture);
+
+        const response = await AxiosInstance.post('/usermanagement/single_local_user', formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
+
+        return { status: true, data: response.data.body };
+    } catch (e) {
+        return { status: false, message: e.response?.data?.error };
+    }
+});
+
 export const UpdateUser = createAsyncThunk('usermanage/UpdateUser', async (data) => {
     try {
         const formData = new FormData();
@@ -79,6 +103,31 @@ export const UpdateUser = createAsyncThunk('usermanage/UpdateUser', async (data)
         formData.append("isRemovePicture", data.isRemovePicture);
 
         const response = await AxiosInstance.put(`/usermanagement/users/${data.id}`, formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
+
+        return { status: true, data: response.data.body };
+    } catch (e) {
+        return { status: false, message: e.response?.data?.error };
+    }
+});
+
+export const UpdateLocalUser = createAsyncThunk('usermanage/UpdateLocalUser', async (data) => {
+    try {
+        const formData = new FormData();
+        formData.append("username", data.username);
+        formData.append("email", data.email);
+        formData.append("role", data.role);
+        formData.append("password", data.password);
+        formData.append("status", data.status);
+        formData.append("ProfilePicture", data.ProfilePicture);
+        formData.append("isRemovePicture", data.isRemovePicture);
+
+        const response = await AxiosInstance.put(`/usermanagement/user-local/${data.id}`, formData,
             {
                 headers: {
                     "Content-Type": "multipart/form-data",

@@ -24,7 +24,7 @@ const UserHeader = ({ title }) => {
                             >
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                             </svg>
-                            Add a new user
+                            Mapping user
                         </button>
                         <button onClick={() => navigate('/hierarchy-management/user/create-multiple')} className="flex items-center px-4 py-2 bg-red-500 text-white font-medium rounded-lg shadow-md hover:bg-red-600 focus:outline-none">
                             <svg

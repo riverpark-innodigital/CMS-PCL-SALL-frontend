@@ -15,6 +15,7 @@ const InputComponet = ({
   format,
   placeholder,
   required,
+  disabled,
 }) => {
   const [error, setError] = useState("");
   const [charCount, setCharCount] = useState(0); // Tracks the character count
@@ -87,6 +88,7 @@ const InputComponet = ({
         </label>
         {type !== "password" && (
           <Input
+            disabled={disabled}
             size="large"
             type={type == undefined ? "text" : type}
             placeholder={placeholder}
@@ -144,6 +146,7 @@ InputComponet.propTypes = {
   vildate: PropTypes.string,
   placeholder: PropTypes.string,
   required: PropTypes.bool,
+  disabled: PropTypes.bool,
 };
 
 export default InputComponet;

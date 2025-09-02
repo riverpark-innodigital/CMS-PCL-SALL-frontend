@@ -51,7 +51,9 @@ const App = () => {
           <Route path="/company" element={<CompanyLayout />} />
           <Route path="/hierarchy-management/user" element={<UserManagement />} />
           <Route path="/hierarchy-management/user/create-single" element={<UserFormLayout />} />
+          <Route path="/hierarchy-management/user/create-single-local" element={<UserFormLayout />} />
           <Route path="/hierarchy-management/user/update/:id" element={<UserFormLayout />} />
+          <Route path="/hierarchy-management/user/update-local/:id" element={<UserFormLayout />} />
           <Route path="/hierarchy-management/user/create-multiple" element={<UserFormLayout />} />
           <Route path="/hierarchy-management/saleteam" element={<GroupPermissionManagement />} />
           <Route path="/hierarchy-management/bu" element={<BusinessUnitLayout />} />

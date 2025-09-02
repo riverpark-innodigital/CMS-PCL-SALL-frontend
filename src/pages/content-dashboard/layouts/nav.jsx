@@ -94,7 +94,21 @@ function Navbar({ title }) {
               </>
             }
             {
+              location.pathname === '/hierarchy-management/user/create-single-local' && <>
+                <NavLink to='/hierarchy-management/user/create-single'>
+                    <IoIosArrowBack className='text-[32px]' />
+                </NavLink>
+              </>
+            }
+            {
               location.pathname === `/hierarchy-management/user/update/${id}` && <>
+                <NavLink to='/hierarchy-management/user'>
+                    <IoIosArrowBack className='text-[32px]' />
+                </NavLink>
+              </>
+            }
+            {
+              location.pathname === `/hierarchy-management/user/update-local/${id}` && <>
                 <NavLink to='/hierarchy-management/user'>
                     <IoIosArrowBack className='text-[32px]' />
                 </NavLink>
@@ -119,11 +133,21 @@ function Navbar({ title }) {
             }
             {
               location.pathname === '/hierarchy-management/user/create-single' && <>
-                <span className="text-xl font-primaryBold">Add a new User</span>
+                <span className="text-xl font-primaryBold">Mapping user</span>
+              </>
+            }
+            {
+              location.pathname === '/hierarchy-management/user/create-single-local' && <>
+                <span className="text-xl font-primaryBold">Create New Account</span>
               </>
             }
             {
               location.pathname === `/hierarchy-management/user/update/${id}` && <>
+                <span className="text-xl font-primaryBold">Edit the user</span>
+              </>
+            }
+            {
+              location.pathname === `/hierarchy-management/user/update-local/${id}` && <>
                 <span className="text-xl font-primaryBold">Edit the user</span>
               </>
             }

@@ -6,10 +6,16 @@ import GroupPerModal from '../form/groupper-modal';
 import { IoArrowBack } from 'react-icons/io5';
 import PropTypes from "prop-types";
 import { useSelector, useDispatch } from'react-redux';
-import { gettingGroupPermissionByID } from '../../../../../slicers/permissionSlicer';
+import { gettingAllGroupPermissins, gettingGroupPermissionByID } from '../../../../../slicers/permissionSlicer';
 import DetailLoading from '../../../../../components/content-loading/detail-loading';
 import dateFormat from 'dateformat';
 import DotLoader from '../../../../../components/content-loading/dot-loader';
+import { TrashIcon } from '../../../../../components/Icons/trash-icon';
+import { ConfirmModal } from '../../../../../components/content-modal/comfirm-modal';
+import { ErrorDialog, SuccessDialog } from '../../../../../components/content-modal/alert-dialog';
+import { TrashPopupIcon } from '../../../../../components/Icons/trashpopup-icon';
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const GroupPermissionDrawerComponent = ({ GroupPermissionID }) => {
   const [open, setOpen] = useState(false);
@@ -17,6 +23,11 @@ const GroupPermissionDrawerComponent = ({ GroupPermissionID }) => {
   const dispatch = useDispatch();
   const currentGroupPermissions = useSelector((state) => state.permission.currentGroupPermissions);
   const [tableData, setTableData] = useState([]);
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [successModal, setSuccessModal] = useState(false);
+  const [errorMSG, setErrorMSG] = useState("");
+  const [errorModal, setErrorModal] = useState(false);
+  const authToken = Cookies.get("authToken");
 
   const columns = [
     {
@@ -69,6 +80,31 @@ const GroupPermissionDrawerComponent = ({ GroupPermissionID }) => {
   const onClose = () => {
     setOpen(false);
   };
+
+  const handlerCancelConfirm = () => {
+    setOpenConfirm(false);
+  };
+
+  const deleteSaleTeam = async () => {
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_BASE_URL}/permission/group_permission/${GroupPermissionID}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setSuccessModal(true);
+      setOpenConfirm(false);
+    } catch (error) {
+      setErrorMSG(error.response?.data?.message || error.message);
+      setOpenConfirm(false);
+      setErrorModal(true);
+    }
+  };
+
   return (
     <>
        <IconButton onClick={showDrawer} variant="text" className="rounded-full text-xl text-gray-600">
@@ -95,11 +131,41 @@ const GroupPermissionDrawerComponent = ({ GroupPermissionID }) => {
                     className="flex px-2 py-1 gap-x-2 items-center rounded-md hover:bg-gray-100 duration-100 ease-in-out"
                 >
                 <IoArrowBack />
-                <span>Back to Companys</span>
+                <span>Back to Sale team</span>
                 </button>
             </div>
-            <div className="flex justify-end">
+            <div className="flex items-center gap-2">
                 <GroupPerModal id={GroupPermissionID} />
+                <button onClick={() => setOpenConfirm(true)}>
+                  <TrashIcon className="w-5 h-5 text-red-500" />
+                </button>
+                <ConfirmModal
+                  title="Do you want to delete?"
+                  description="Confirm to proceed with Remove this sale team"
+                  open={openConfirm}
+                  onCancel={handlerCancelConfirm}
+                  onConfirm={deleteSaleTeam}
+                  color="#C00101"
+                  notShowIcon={true}
+                />
+                <SuccessDialog
+                  title="Removed successfully"
+                  onCancel={async () => {
+                    setSuccessModal(false);
+                    setOpen(false);
+                    await dispatch(gettingAllGroupPermissins());
+                  }}
+                  open={successModal}
+                  icon={<TrashPopupIcon />}
+                />
+                <ErrorDialog
+                  title={errorMSG}
+                  open={errorModal}
+                  onCancel={() => {
+                    setErrorMSG("");
+                    setErrorModal(false);
+                  }}
+                />
             </div>
         </div>
         <div className='my-5 w-full border border-gray-300 p-[10px] rounded-[10px]'>

@@ -49,6 +49,7 @@ const UserContent = () => {
         user.map((user, index) => ({
           key: index + 1,
           id: user?.userId,
+          password: user?.appUser?.password,
           Fullname: user?.appUser?.fullname ?? user?.name,
           status: user?.appUser?.active ? "Active" : "Inactive",
           role: user?.appUser?.userRole?.nameEng ?? "No Data",
@@ -342,7 +343,16 @@ const UserContent = () => {
       title: "",
       dataIndex: "action",
       key: "action",
-      render: (_, { id }) => (
+      render: (_, { id, password }) => (
+        password ?
+        <IconButton
+          onClick={() => navigate(`/hierarchy-management/user/update-local/${id}`)}
+          variant="text"
+          className="rounded-full text-xl text-gray-600"
+        >
+          <FiEdit3 />
+        </IconButton>
+        :
         <IconButton
           onClick={() => navigate(`/hierarchy-management/user/update/${id}`)}
           variant="text"

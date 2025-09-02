@@ -3,6 +3,7 @@ import Banner from "../../../../assets/cms-banner.png";
 import SingleForm from "./single-form/single-form";
 import MultipleForm from "./multiple-form/multiple-form";
 import { useLocation, useParams } from "react-router-dom";
+import SingleLocalForm from "./single-local-form/single-local-form";
 
 const UserFormLayout = () => {
 
@@ -21,7 +22,13 @@ const UserFormLayout = () => {
                     location.pathname === '/hierarchy-management/user/create-single' && <SingleForm />
                 }
                 {
+                    location.pathname === '/hierarchy-management/user/create-single-local' && <SingleLocalForm />
+                }
+                {
                     location.pathname === `/hierarchy-management/user/update/${id}` && <SingleForm />
+                }
+                {
+                    location.pathname === `/hierarchy-management/user/update-local/${id}` && <SingleLocalForm />
                 }
                 {
                     location.pathname === '/hierarchy-management/user/create-multiple' && <MultipleForm />
