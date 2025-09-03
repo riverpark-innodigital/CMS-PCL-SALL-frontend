@@ -49,7 +49,7 @@ const UserContent = () => {
         user.map((user, index) => ({
           key: index + 1,
           id: user?.userId,
-          password: user?.appUser?.password,
+          isLocal: user?.appUser?.isLocal,
           Fullname: user?.appUser?.fullname ?? user?.name,
           status: user?.appUser?.active ? "Active" : "Inactive",
           role: user?.appUser?.userRole?.nameEng ?? "No Data",
@@ -343,8 +343,8 @@ const UserContent = () => {
       title: "",
       dataIndex: "action",
       key: "action",
-      render: (_, { id, password }) => (
-        password ?
+      render: (_, { id, isLocal }) => (
+        isLocal ?
         <IconButton
           onClick={() => navigate(`/hierarchy-management/user/update-local/${id}`)}
           variant="text"
